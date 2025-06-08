@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+  <persistence-unit name="Hero2ZeroPU" transaction-type="JTA">
+    <jta-data-source>jdbc/hero2zero</jta-data-source>
+    <properties>
+      <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+      <property name="jakarta.persistence.jdbc.driver"   value="com.mysql.cj.jdbc.Driver"/>
+      <property name="jakarta.persistence.jdbc.url"      value="jdbc:mysql://127.0.0.1:3306/hero2zero"/>
+      <property name="jakarta.persistence.jdbc.user"     value="h2zuser"/>
+      <property name="jakarta.persistence.jdbc.password" value="h2zpass"/>
+      <property name="jakarta.persistence.jdbc.allowPublicKeyRetrieval" value="true"/>
+      <property name="jakarta.persistence.jdbc.useSSL" value="false"/>
+    </properties>
+  </persistence-unit>
+
+</persistence>
