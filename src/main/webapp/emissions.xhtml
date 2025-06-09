@@ -4,7 +4,18 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head><title>CO₂ Emissions</title></h:head>
     <h:body>
-        <h:dataTable value="#{emissionBean.allEmissions}" var="e">
+
+        <h:form>
+            <h:panelGrid columns="2">
+                <h:outputLabel for="countryCode" value="Country Code:" />
+                <h:inputText id="countryCode" value="#{emissionBean.filterCode}" />
+
+                <h:commandButton value="Suchen" action="#{emissionBean.loadByCode}" />
+            </h:panelGrid>
+        </h:form>
+
+
+        <h:dataTable value="#{emissionBean.filteredEmissions}" var="e">
             <h:column><f:facet name="header">ID</f:facet> #{e.id} </h:column>
             <h:column><f:facet name="header">Country</f:facet> #{e.countryCode} </h:column>
             <h:column><f:facet name="header">Year</f:facet> #{e.year} </h:column>

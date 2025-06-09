@@ -8,11 +8,19 @@ import java.util.List;
 
 @ApplicationScoped
 public class EmissionDAO {
+
     @PersistenceContext(unitName = "Hero2ZeroPU")
     private EntityManager em;
 
     public List<CountryEmission> listAll() {
         return em.createQuery("SELECT c FROM CountryEmission c", CountryEmission.class)
-                 .getResultList();
+                .getResultList();
+    }
+
+    public List<CountryEmission> findByCountryCode(String code) {
+        return em.createQuery(
+                "SELECT c FROM CountryEmission c WHERE c.countryCode = :code", CountryEmission.class)
+                .setParameter("code", code)
+                .getResultList();
     }
 }
