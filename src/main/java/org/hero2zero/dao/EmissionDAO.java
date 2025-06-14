@@ -23,4 +23,17 @@ public class EmissionDAO {
                 .setParameter("code", code)
                 .getResultList();
     }
+
+    public List<CountryEmission> findByContinent(String continent) {
+        return em.createQuery(
+                "SELECT c FROM CountryEmission c WHERE c.continent = :continent", CountryEmission.class)
+                .setParameter("continent", continent)
+                .getResultList();
+    }
+
+    public List<CountryEmission> findAll() {
+        return em.createQuery("SELECT c FROM CountryEmission c", CountryEmission.class)
+                .getResultList();
+    }
+
 }

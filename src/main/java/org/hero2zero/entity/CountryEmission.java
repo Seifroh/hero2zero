@@ -21,6 +21,17 @@ public class CountryEmission {
 
     @Column(name = "co2_emissions", nullable = true)
     private Double co2Emissions;
+    
+    @Column(name = "continent")
+    private String continent;
+
+    public String getContinent() {
+        return continent;
+    }
+
+    public void setContinent(String continent) {
+        this.continent = continent;
+    }
 
     // Getter & Setter
     public Long getId() {
