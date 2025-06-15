@@ -6,11 +6,12 @@ import jakarta.inject.Named;
 import jakarta.inject.Inject;
 import org.hero2zero.dao.EmissionDAO;
 import org.hero2zero.entity.CountryEmission;
-
+import java.util.HashSet;
+import java.util.Set;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
+import java.util.Collections;
 
 @Named
 @ViewScoped
@@ -18,12 +19,12 @@ public class EmissionBean implements Serializable {
 
     @Inject
     private EmissionDAO dao;
-
+    private Set<String> selectedContinents = new HashSet<>();
     private String filterCountry;
     private String filterCode;
     private String filterYear;
     private String filterCo2;
-    private List<String> selectedContinents = new ArrayList<>();
+    private String co2ErrorMessage;
 
     private List<CountryEmission> allEmissions;
     private List<CountryEmission> filteredEmissions;
@@ -71,12 +72,16 @@ public class EmissionBean implements Serializable {
         }
 
         if (filterCo2 != null && !filterCo2.isEmpty()) {
+            co2ErrorMessage = null;
             try {
-                double value = Double.parseDouble(filterCo2.replace(",", "."));
+                double value = Double.parseDouble(filterCo2); // KEIN Komma-Handling mehr
                 base = base.stream()
+                        .filter(e -> e.getCo2Emissions() != null) // das ist entscheidend
                         .filter(e -> Math.abs(e.getCo2Emissions() - value) < 0.001)
                         .collect(Collectors.toList());
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
+                co2ErrorMessage = "Bitte eine gültige CO₂-Zahl mit Punkt eingeben (z. B. 0.123)";
+                base = Collections.emptyList();
             }
         }
 
@@ -126,11 +131,11 @@ public class EmissionBean implements Serializable {
     }
 
     // Getter und Setter
-    public List<String> getSelectedContinents() {
+    public Set<String> getSelectedContinents() {
         return selectedContinents;
     }
 
-    public void setSelectedContinents(List<String> selectedContinents) {
+    public void setSelectedContinents(Set<String> selectedContinents) {
         this.selectedContinents = selectedContinents;
         filter(); // bei Änderung neu filtern
     }
@@ -197,4 +202,11 @@ public class EmissionBean implements Serializable {
         return isFilterActive() && !getPageData().isEmpty();
     }
 
+    public String getCo2ErrorMessage() {
+        return co2ErrorMessage;
+    }
+
+    public void setCo2ErrorMessage(String co2ErrorMessage) {
+        this.co2ErrorMessage = co2ErrorMessage;
+    }
 }
