@@ -29,87 +29,116 @@
             </div>
         </nav>
 
-        <div class="container">
-            <!-- Filter: Kontinentenauswahl -->
+        <h:form id="mainForm" prependId="false">
+
+            <!-- Kontinent-Buttons -->
+            <div class="btn-group mb-3" role="group" aria-label="Kontinente">
+                <h:commandButton value="Afrika"
+                                 action="#{emissionBean.toggleContinent('Afrika')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Afrika') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Antarktis"
+                                 action="#{emissionBean.toggleContinent('Antarktis')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Antarktis') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Asien"
+                                 action="#{emissionBean.toggleContinent('Asien')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Asien') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Europa"
+                                 action="#{emissionBean.toggleContinent('Europa')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Europa') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Nordamerika"
+                                 action="#{emissionBean.toggleContinent('Nordamerika')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Nordamerika') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Ozeanien"
+                                 action="#{emissionBean.toggleContinent('Ozeanien')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Ozeanien') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Suedamerika"
+                                 action="#{emissionBean.toggleContinent('Suedamerika')}"
+                                 styleClass="#{emissionBean.selectedContinents.contains('Suedamerika') ? 'btn btn-primary' : 'btn btn-outline-primary'}" />
+                <h:commandButton value="Alle"
+                                 action="#{emissionBean.clearContinents}"
+                                 styleClass="btn btn-secondary" />
+            </div>
+
+            <!-- Suchfelder -->
             <div class="row mb-3">
-                <div class="col-md-4">
-                    <h:form id="filterForm">
-                        <div class="input-group">
-                            <label class="input-group-text" for="continentSelect">Kontinent</label>
-                            <h:selectOneMenu id="continentSelect"
-                                             value="#{emissionBean.selectedContinent}"
-                                             styleClass="form-select"
-                                             onchange="document.getElementById('filterForm:submitBtn').click()">
-                                <f:selectItem itemLabel="Alle" itemValue="" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="Afrika" itemValue="Afrika"/>
-                                <f:selectItem itemLabel="Antarktis" itemValue="Antarktis"/>
-                                <f:selectItem itemLabel="Asien" itemValue="Asien"/>
-                                <f:selectItem itemLabel="Europa" itemValue="Europa"/>
-                                <f:selectItem itemLabel="Nordamerika" itemValue="Nordamerika"/>
-                                <f:selectItem itemLabel="Ozeanien" itemValue="Ozeanien"/>
-                                <f:selectItem itemLabel="Südamerika" itemValue="Südamerika"/>
-                            </h:selectOneMenu>
-                            <button type="submit"
-                                    id="filterForm:submitBtn"
-                                    class="btn btn-primary"
-                                    style="display:none">
-                                Filtern
-                            </button>
-                        </div>
-                    </h:form>
+                <div class="col-md-3">
+                    <h:outputLabel for="filterCountry" value="Land:" />
+                    <h:inputText id="filterCountry" value="#{emissionBean.filterCountry}" styleClass="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <h:outputLabel for="filterCode" value="Code:" />
+                    <h:inputText id="filterCode" value="#{emissionBean.filterCode}" styleClass="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <h:outputLabel for="filterYear" value="Jahr:" />
+                    <h:inputText id="filterYear" value="#{emissionBean.filterYear}" maxlength="4" styleClass="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <h:outputLabel for="filterCO2" value="CO₂ (kt):" />
+                    <h:inputText id="filterCO2" value="#{emissionBean.filterCo2}" styleClass="form-control" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <h:commandButton value="Suchen" action="#{emissionBean.filter}" styleClass="btn btn-primary w-100" />
                 </div>
             </div>
 
             <!-- Datentabelle -->
-            <h:form id="tableForm">
-                <div class="table-responsive">
-                    <h:dataTable value="#{emissionBean.pageData}"
-                                 var="e"
-                                 border="1"
-                                 styleClass="table table-striped">
-                        <!-- ID -->
-                        <h:column>
-                            <f:facet name="header">ID</f:facet>
-                                #{e.id}
-                        </h:column>
-                        <!-- Country -->
-                        <h:column>
-                            <f:facet name="header">Land</f:facet>
-                                #{e.country}
-                        </h:column>
-                        <!-- Country Code -->
-                        <h:column>
-                            <f:facet name="header">Code</f:facet>
-                                #{e.countryCode}
-                        </h:column>
-                        <!-- Year -->
-                        <h:column>
-                            <f:facet name="header">Jahr</f:facet>
-                                #{e.year}
-                        </h:column>
-                        <!-- CO2 Emissions -->
-                        <h:column>
-                            <f:facet name="header">CO₂ (kt)</f:facet>
-                                #{e.co2Emissions}
-                        </h:column>
-                    </h:dataTable>
+
+            <h:panelGroup rendered="#{emissionBean.isFilterActive()}">
+                <h:dataTable value="#{emissionBean.pageData}"
+                             var="e"
+                             border="1"
+                             styleClass="table table-striped">
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                            #{e.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Land</f:facet>
+                            #{e.country}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Code</f:facet>
+                            #{e.countryCode}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Jahr</f:facet>
+                            #{e.year}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">CO₂ (kt)</f:facet>
+                            #{e.co2Emissions}
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+
+            <!-- Hinweis, wenn nichts gefiltert -->
+            <h:panelGroup rendered="#{not emissionBean.isFilterActive()}">
+                <div class="alert alert-info" role="alert">
+                    Bitte wähle mindestens einen Kontinent oder nutze die Suche.
                 </div>
-            </h:form>
-            <div class="mt-3">
-                <h:form>
+            </h:panelGroup>
+
+
+            <!-- NEU: Navigation + Seiteninfo nur bei Ergebnissen -->
+            <h:panelGroup rendered="#{emissionBean.dataAvailable}">
+                <div class="mt-3">
                     <h:commandButton value="Zurück"
                                      action="#{emissionBean.prevPage}"
-                                     disabled="#{!emissionBean.hasPrev}" />
+                                     disabled="#{!emissionBean.hasPrev}"
+                                     styleClass="btn btn-outline-secondary" />
                     <h:commandButton value="Weiter"
                                      action="#{emissionBean.nextPage}"
-                                     disabled="#{!emissionBean.hasNext}" />
-                </h:form>
-            </div>
-            <p class="mt-2 text-muted small">
-                Seite #{emissionBean.currentPageDisplay} von #{emissionBean.totalPages} –
-                Einträge insgesamt: #{emissionBean.totalEntries}
-            </p>
+                                     disabled="#{!emissionBean.hasNext}"
+                                     styleClass="btn btn-outline-secondary ms-2" />
+                </div>
 
-        </div>
+                <p class="mt-2 text-muted small">
+                    Seite #{emissionBean.currentPageDisplay} von #{emissionBean.totalPages} –
+                    Einträge insgesamt: #{emissionBean.totalEntries}
+                </p>
+            </h:panelGroup>
+        </h:form>
+
     </h:body>
 </html>
