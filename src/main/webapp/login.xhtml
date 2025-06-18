@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Login – Like Hero to Zero</title>
+    </h:head>
+
+    <h:body>
+        <h:panelGroup id="loginInfo" layout="block" style="margin-bottom:1em;">
+            Bitte geben Sie Ihren <strong>Vor- und Nachnamen</strong> ein, z. B. „Max Muster“,
+            sowie Ihr Passwort.
+        </h:panelGroup>
+
+        <h:form id="loginForm" prependId="false">
+            <f:passThroughAttribute name="action" value="j_security_check"/>
+            <f:passThroughAttribute name="method" value="post"/>
+
+            <h:panelGrid columns="2" cellpadding="5" 
+                         pt:aria-describedby="loginInfo">
+
+                <h:outputLabel for="username" value="Name:"/>
+                <h:inputText id="username" required="true">
+                    <!-- HTML-Name für FORM-Auth -->
+                    <f:passThroughAttribute name="name" value="j_username"/>
+                    <!-- ARIA-Attribute -->
+                    <f:passThroughAttribute name="aria-required" value="true"/>
+                    <f:passThroughAttribute name="aria-describedby" value="loginInfo"/>
+                </h:inputText>
+
+                <h:outputLabel for="password" value="Passwort:"/>
+                <h:inputSecret id="password" required="true">
+                    <f:passThroughAttribute name="name" value="j_password"/>
+                    <f:passThroughAttribute name="aria-required" value="true"/>
+                    <f:passThroughAttribute name="aria-describedby" value="loginInfo"/>
+                </h:inputSecret>
+            </h:panelGrid>
+
+            <h:commandButton value="Anmelden" type="submit" style="margin-top:1em; width:100%"/>
+            <h:panelGroup rendered="#{param.error != null}"
+                          style="color:red; margin-top:1em;">
+                Ungültige Zugangsdaten.
+            </h:panelGroup>
+        </h:form>
+    </h:body>
+</html>
