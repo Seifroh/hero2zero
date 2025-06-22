@@ -8,7 +8,7 @@
     <persistence-unit name="Hero2ZeroPU" transaction-type="JTA">
         <jta-data-source>jdbc/hero2zero</jta-data-source>
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <!--  <property name="jakarta.persistence.schema-generation.database.action" value="create"/>-->
             <property name="jakarta.persistence.jdbc.driver"   value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url"      value="jdbc:mysql://127.0.0.1:3306/hero2zero"/>
             <property name="jakarta.persistence.jdbc.user"     value="h2zuser"/>

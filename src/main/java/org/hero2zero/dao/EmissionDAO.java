@@ -1,12 +1,12 @@
 package org.hero2zero.dao;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hero2zero.entity.CountryEmission;
 import java.util.List;
 
-@ApplicationScoped
+@Stateless
 public class EmissionDAO {
 
     @PersistenceContext(unitName = "Hero2ZeroPU")
@@ -36,4 +36,18 @@ public class EmissionDAO {
                 .getResultList();
     }
 
+    public List<CountryEmission> findAllApproved() {
+        return em.createQuery(
+                "SELECT c FROM CountryEmission c WHERE c.approved = true",
+                CountryEmission.class)
+                .getResultList();
+    }
+
+    public void create(CountryEmission emission) {
+        em.persist(emission);
+    }
+
+    public void update(CountryEmission emission) {
+        em.merge(emission);
+    }
 }

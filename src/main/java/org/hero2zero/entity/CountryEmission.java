@@ -22,6 +22,9 @@ public class CountryEmission {
     @Column(name = "co2_emissions", nullable = true)
     private Double co2Emissions;
 
+    @Column(name = "approved", nullable = false)
+    private boolean approved = false;
+
     // Getter & Setter
     public Long getId() {
         return id;
@@ -61,5 +64,13 @@ public class CountryEmission {
 
     public void setCo2Emissions(Double co2Emissions) {
         this.co2Emissions = co2Emissions;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
     }
 }
