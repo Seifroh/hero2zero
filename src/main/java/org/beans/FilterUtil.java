@@ -20,6 +20,7 @@ public class FilterUtil {
      * @return true, wenn kein Filter oder numerisch gleich innerhalb Toleranz
      */
     public boolean co2Filter(Object value, Object filter, Locale locale) {
+        System.out.println("DEBUG: co2Filter called with value=" + value + ", filter=" + filter);
         if (filter == null || filter.toString().isBlank()) {
             return true;
         }

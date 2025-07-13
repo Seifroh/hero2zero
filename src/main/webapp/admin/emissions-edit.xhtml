@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <h:head>
         <title>Admin · Emissionsdaten pflegen</title>
     </h:head>
@@ -29,6 +30,14 @@
                           filterBy="#{e.country}"
                           filterMatchMode="contains"
                           style="width:20%">
+                    <f:facet name="filter">
+                        <p:inputText placeholder="Land"
+                                     style="width:100%"
+                                     maxlength="50"
+                                     pt:pattern="[A-Za-zÄÖÜäöüß ]+"
+                                     pt:title="Nur Buchstaben erlaubt. Maximal 50 Zeichen."
+                                     onkeyup="PF('adminTable').filter()"/>
+                    </f:facet>
                     #{e.country}
                 </p:column>
 
@@ -36,6 +45,14 @@
                           filterBy="#{e.countryCode}"
                           filterMatchMode="contains"
                           style="width:15%">
+                    <f:facet name="filter">
+                        <p:inputText placeholder="Code"
+                                     style="width:100%"
+                                     maxlength="3"
+                                     pt:pattern="[A-Za-z]{1,3}"
+                                     pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."
+                                     onkeyup="PF('adminTable').filter()"/>
+                    </f:facet>
                     #{e.countryCode}
                 </p:column>
 
@@ -43,6 +60,14 @@
                           filterBy="#{e.year}"
                           filterMatchMode="equals"
                           style="width:15%">
+                    <f:facet name="filter">
+                        <p:inputText placeholder="Jahr"
+                                     style="width:100%"
+                                     maxlength="4"
+                                     pt:pattern="\d{4}"
+                                     pt:title="Vier Zahlen erforderlich, z. B. 1950."
+                                     onkeyup="PF('adminTable').filter()"/>
+                    </f:facet>
                     #{e.year}
                 </p:column>
 
@@ -53,6 +78,9 @@
                     <f:facet name="filter">
                         <p:inputText placeholder="CO₂"
                                      style="width:100%"
+                                     maxlength="10"
+                                     pt:pattern="\d+(\.\d+)?"
+                                     pt:title="Nur Zahlen erlaubt. Nachkommastellen bitte mit Punkt schreiben (z. B. 0.1)."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
                     <p:cellEditor>
@@ -62,6 +90,7 @@
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
+
 
                 <p:ajax event="cellEdit"
                         listener="#{emissionsAdminBean.onCellEdit}"

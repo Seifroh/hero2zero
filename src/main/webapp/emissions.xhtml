@@ -54,6 +54,8 @@
             </p:toolbarGroup>
         </p:toolbar>
 
+        <h:outputText value="TEST: #{filterUtil != null ? 'Bean geladen' : 'Bean NICHT geladen'}" style="color:red"/>
+
         <h:outputText value="loginBean.loggedIn=#{loginBean.loggedIn}" 
                       style="color:red; font-weight:bold; margin-left:1em"/>
 
@@ -67,7 +69,7 @@
             <p:growl id="messages" showDetail="true" showSummary="false"/>
 
             <p:dataTable id="dataTable"
-                         widgetVar="dt"
+                         widgetVar="dataTable"
                          value="#{emissionBean.allEmissionsApproved}"
                          var="e"
                          paginator="true" rows="20"
@@ -85,13 +87,14 @@
                     <f:facet name="filter">
                         <p:inputText style="width:100%"
                                      placeholder="Land"
+                                     maxlength="50"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dt').filter();
+                                                 PF('dataTable').filter();
                                              } else {
                                                  this.reportValidity();
                                              }"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
-                                     pt:title="Nur Buchstaben erlaubt, auch Umlaute."/>
+                                     pt:title="Nur Buchstaben erlaubt, auch Umlaute. Maximal 50 Zeichen."/>
                     </f:facet>
                     #{e.country}
                 </p:column>
@@ -103,8 +106,9 @@
                     <f:facet name="filter">
                         <p:inputText style="width:100%"
                                      placeholder="Code"
+                                     maxlength="3"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dt').filter();
+                                                 PF('dataTable').filter();
                                              } else {
                                                  this.reportValidity();
                                              }"
@@ -123,24 +127,27 @@
                                      placeholder="Jahr"
                                      maxlength="4"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dt').filter();
+                                                 PF('dataTable').filter();
                                              } else {
                                                  this.reportValidity();
                                              }"
                                      pt:pattern="\d{4}"
-                                     pt:title="Vier Ziffern erforderlich"/>
+                                     pt:title="Vier Zahlen erforderlich, z.B. 1950."/>
                     </f:facet>
                     #{e.year}
                 </p:column>
 
                 <p:column headerText="CO₂ (kt)"
                           filterBy="#{e.co2Emissions}"
-                          filterFunction="#{filterUtil.co2Filter}"
+                          filterFunction="#{emissionBean.co2Filter}"
                           style="width:15%">
                     <f:facet name="filter">
                         <p:inputText placeholder="CO₂"
+                                     maxlength="12"
                                      style="width:100%"
-                                     onkeyup="PF('dataTable').filter()"/>
+                                     onkeyup="PF('dataTable').filter()"
+                                     pt:pattern="\d+(\.\d+)?"
+                                     pt:title="Nur Zahlen erlaubt. Nachkommastellen bitte mit Punkt schreiben (z.B. 0.1). Maximal 12 Zeichen."/>
                     </f:facet>
                     #{e.co2Emissions}
                 </p:column>

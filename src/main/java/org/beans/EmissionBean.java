@@ -6,6 +6,7 @@ import jakarta.inject.Named;
 import jakarta.inject.Inject;
 import org.hero2zero.dao.EmissionDAO;
 import org.hero2zero.entity.CountryEmission;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -20,10 +21,12 @@ public class EmissionBean implements Serializable {
     private EmissionDAO dao;
 
     private List<CountryEmission> allEmissions;
+    private List<CountryEmission> allEmissionsApproved;
 
     @PostConstruct
     public void init() {
         allEmissions = dao.findAll();
+        allEmissionsApproved = dao.findAllApproved();
     }
 
     public List<CountryEmission> getAllEmissions() {
@@ -31,7 +34,7 @@ public class EmissionBean implements Serializable {
     }
 
     public List<CountryEmission> getAllEmissionsApproved() {
-        return dao.findAllApproved();
+        return allEmissionsApproved;
     }
 
     public boolean co2Filter(Object value, Object filter, Locale locale) {
