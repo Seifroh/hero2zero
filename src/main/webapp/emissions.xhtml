@@ -21,6 +21,7 @@
             </p:toolbarGroup>
 
             <p:toolbarGroup align="right" style="display:flex; align-items:center; gap:1em">
+
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
                               icon="pi pi-sign-in"
@@ -33,6 +34,11 @@
 
                     <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
                                   style="color:#333; font-style:italic;"/>
+
+                    <p:button value="Datenpflege"
+                              icon="pi pi-database"
+                              outcome="/admin/emissions-edit.xhtml"
+                              styleClass="ui-button-sm"/>
 
                     <h:form prependId="false" style="display:inline">
                         <p:commandButton value="Logout"
@@ -47,13 +53,14 @@
                           icon="pi pi-home"
                           outcome="emissions"
                           styleClass="ui-button-sm"/>
+
                 <p:button value="Impressum"
                           icon="pi pi-info-circle"
                           onclick="PF('impressumDlg').show();return false;"
                           styleClass="ui-button-sm"/>
             </p:toolbarGroup>
-        </p:toolbar>
-
+        </p:toolbar> 
+        
         <h:outputText value="TEST: #{filterUtil != null ? 'Bean geladen' : 'Bean NICHT geladen'}" style="color:red"/>
 
         <h:outputText value="loginBean.loggedIn=#{loginBean.loggedIn}" 
@@ -89,10 +96,10 @@
                                      placeholder="Land"
                                      maxlength="50"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
+                                                     PF('dataTable').filter();
+                                                 } else {
+                                                     this.reportValidity();
+                                                 }"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
                                      pt:title="Nur Buchstaben erlaubt, auch Umlaute. Maximal 50 Zeichen."/>
                     </f:facet>
@@ -108,10 +115,10 @@
                                      placeholder="Code"
                                      maxlength="3"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
+                                                     PF('dataTable').filter();
+                                                 } else {
+                                                     this.reportValidity();
+                                                 }"
                                      pt:pattern="[A-Za-z]{1,3}"
                                      pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
                     </f:facet>
@@ -127,10 +134,10 @@
                                      placeholder="Jahr"
                                      maxlength="4"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
+                                                     PF('dataTable').filter();
+                                                 } else {
+                                                     this.reportValidity();
+                                                 }"
                                      pt:pattern="\d{4}"
                                      pt:title="Vier Zahlen erforderlich, z.B. 1950."/>
                     </f:facet>

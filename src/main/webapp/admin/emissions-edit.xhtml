@@ -4,10 +4,63 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
     <h:head>
-        <title>Admin · Emissionsdaten pflegen</title>
+        <meta charset="UTF-8"/>
+        <title>Like Hero to Zero | Admin/Wissenschaft</title>
+        <h:outputStylesheet library="luna-blue" name="theme.css"/>
     </h:head>
     <h:body>
+        <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
+            <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5em">
+                <h:graphicImage library="images"
+                                name="logo.png"
+                                alt="Hero2Zero Logo"
+                                height="80"/>
+                <h:outputText value="Like Hero to Zero"
+                              style="font-weight:bold; font-size:1.5em; color:#333"/>
+            </p:toolbarGroup>
+
+            <p:toolbarGroup align="right" style="display:flex; align-items:center; gap:1em">
+                <h:panelGroup rendered="#{!loginBean.loggedIn}">
+                    <p:button value="Login"
+                              icon="pi pi-sign-in"
+                              outcome="login"
+                              styleClass="ui-button-sm"/>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{loginBean.loggedIn}"
+                              style="display:flex; align-items:center; gap:0.5em">
+
+                    <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
+                                  style="color:#333; font-style:italic;"/>
+
+                    <h:form prependId="false" style="display:inline">
+                        <p:commandButton value="Logout"
+                                         icon="pi pi-sign-out"
+                                         action="#{loginBean.logout()}"
+                                         ajax="false"
+                                         styleClass="ui-button-sm"/>
+                    </h:form>
+                    <p:dialog header="Hinweis" widgetVar="impressumDlg"
+                              modal="true" closable="true"
+                              draggable="false" resizable="false">
+                        <h:outputText value="Uniprojekt – kein formelles Impressum notwendig."/>
+                    </p:dialog>
+
+                </h:panelGroup>
+
+                <p:button value="Home"
+                          icon="pi pi-home"
+                          outcome="/emissions.xhtml"
+                          styleClass="ui-button-sm"/>
+                <p:button value="Impressum"
+                          icon="pi pi-info-circle"
+                          onclick="PF('impressumDlg').show();return false;"
+                          styleClass="ui-button-sm"/>
+            </p:toolbarGroup>
+        </p:toolbar>
+
         <h:form id="adminForm">
 
             <!-- Growl für Feedback -->
