@@ -7,8 +7,8 @@
 
     <h:head>
         <meta charset="UTF-8"/>
-        <title>Like Hero to Zero | Admin/Wissenschaft</title>
-        <h:outputStylesheet library="luna-blue" name="theme.css"/>
+        <title>Like Hero to Zero | Wissenschaftler</title>
+        <h:outputStylesheet library="nova-light" name="theme.css"/>
     </h:head>
     <h:body>
         <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
@@ -21,7 +21,8 @@
                               style="font-weight:bold; font-size:1.5em; color:#333"/>
             </p:toolbarGroup>
 
-            <p:toolbarGroup align="right" style="display:flex; align-items:center; gap:1em">
+            <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
+
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
                               icon="pi pi-sign-in"
@@ -29,11 +30,11 @@
                               styleClass="ui-button-sm"/>
                 </h:panelGroup>
 
-                <h:panelGroup rendered="#{loginBean.loggedIn}"
-                              style="display:flex; align-items:center; gap:0.5em">
-
-                    <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
-                                  style="color:#333; font-style:italic;"/>
+                <h:panelGroup rendered="#{loginBean.loggedIn}">
+                    <!--<p:button value="Datenpflege"
+                              icon="pi pi-database"
+                              outcome="/admin/emissions-edit.xhtml"
+                              styleClass="ui-button-sm"/>-->
 
                     <h:form prependId="false" style="display:inline">
                         <p:commandButton value="Logout"
@@ -42,18 +43,13 @@
                                          ajax="false"
                                          styleClass="ui-button-sm"/>
                     </h:form>
-                    <p:dialog header="Hinweis" widgetVar="impressumDlg"
-                              modal="true" closable="true"
-                              draggable="false" resizable="false">
-                        <h:outputText value="Uniprojekt – kein formelles Impressum notwendig."/>
-                    </p:dialog>
-
                 </h:panelGroup>
 
                 <p:button value="Home"
                           icon="pi pi-home"
                           outcome="/emissions.xhtml"
                           styleClass="ui-button-sm"/>
+
                 <p:button value="Impressum"
                           icon="pi pi-info-circle"
                           onclick="PF('impressumDlg').show();return false;"
@@ -61,18 +57,39 @@
             </p:toolbarGroup>
         </p:toolbar>
 
+        <!-- Loginstatus unterhalb -->
+        <h:panelGroup rendered="#{loginBean.loggedIn}" layout="block"
+                      style="text-align:right; padding:0 1em 0.5em 1em;">
+            <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
+                          style="color:#333; font-style:italic;"/>
+        </h:panelGroup>
+
+        <!-- Impressum-Dialog global -->
+        <p:dialog header="Hinweis" widgetVar="impressumDlg"
+                  modal="true" closable="true"
+                  draggable="false" resizable="false">
+            <h:outputText value="Uniprojekt – kein formelles Impressum notwendig."/>
+        </p:dialog>
+
         <h:form id="adminForm">
 
-            <!-- Growl für Feedback -->
             <p:growl id="messages" showDetail="true" showSummary="false"/>
+
+            <h:panelGroup layout="block" style="margin-bottom:1em">
+                <p:commandButton value="Neuer Eintrag"
+                                 icon="pi pi-plus"
+                                 oncomplete="PF('newDlg').show()"
+                                 process="@this"
+                                 styleClass="ui-button-sm"/>
+            </h:panelGroup>
 
             <p:dataTable id="dataTable"
                          widgetVar="adminTable"
                          value="#{emissionsAdminBean.allEmissions}"
                          var="e"
                          editable="true" editMode="cell"
-                         paginator="true" rows="20"
-                         filterEvent="keyup" filterDelay="300"
+                         paginator="true" rows="15"
+                         filterEvent="keyup" filterDelay="200"
                          style="width:100%">
 
                 <p:column headerText="ID" style="width:10%">
@@ -144,7 +161,6 @@
                     </p:cellEditor>
                 </p:column>
 
-
                 <p:ajax event="cellEdit"
                         listener="#{emissionsAdminBean.onCellEdit}"
                         update=":adminForm:messages"/>
@@ -161,12 +177,7 @@
                     </h:panelGroup>
                 </p:column>
             </p:dataTable>
-
-            <p:commandButton value="Neuer Eintrag"
-                             icon="pi pi-plus"
-                             oncomplete="PF('newDlg').show()"
-                             process="@this"/>
-
+            <!-- Der Dialog zum Neuanlegen -->
             <p:dialog header="Neue Emission"
                       widgetVar="newDlg"
                       modal="true"

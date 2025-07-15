@@ -7,7 +7,7 @@
     <h:head>
         <meta charset="UTF-8"/>
         <title>Like Hero to Zero | CO₂-Emissionen</title>
-        <h:outputStylesheet library="luna-blue" name="theme.css"/>
+        <h:outputStylesheet library="nova-light" name="theme.css"/>
     </h:head>
     <h:body>
         <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
@@ -20,7 +20,8 @@
                               style="font-weight:bold; font-size:1.5em; color:#333"/>
             </p:toolbarGroup>
 
-            <p:toolbarGroup align="right" style="display:flex; align-items:center; gap:1em">
+            <!-- Rechte Toolbar: nur Buttons -->
+            <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
 
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
@@ -29,12 +30,7 @@
                               styleClass="ui-button-sm"/>
                 </h:panelGroup>
 
-                <h:panelGroup rendered="#{loginBean.loggedIn}"
-                              style="display:flex; align-items:center; gap:0.5em">
-
-                    <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
-                                  style="color:#333; font-style:italic;"/>
-
+                <h:panelGroup rendered="#{loginBean.loggedIn}">
                     <p:button value="Datenpflege"
                               icon="pi pi-database"
                               outcome="/admin/emissions-edit.xhtml"
@@ -59,12 +55,18 @@
                           onclick="PF('impressumDlg').show();return false;"
                           styleClass="ui-button-sm"/>
             </p:toolbarGroup>
-        </p:toolbar> 
-        
-        <h:outputText value="TEST: #{filterUtil != null ? 'Bean geladen' : 'Bean NICHT geladen'}" style="color:red"/>
+        </p:toolbar>
+        <!-- Loginstatus darunter -->
+        <h:panelGroup rendered="#{loginBean.loggedIn}" layout="block"
+                      style="text-align:right; padding:0 1em 0.5em 1em;">
+            <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
+                          style="color:#333; font-style:italic;"/>
+        </h:panelGroup>
+
+         <!-- <h:outputText value="TEST: #{filterUtil != null ? 'Bean geladen' : 'Bean NICHT geladen'}" style="color:red"/>
 
         <h:outputText value="loginBean.loggedIn=#{loginBean.loggedIn}" 
-                      style="color:red; font-weight:bold; margin-left:1em"/>
+                      style="color:red; font-weight:bold; margin-left:1em"/> -->
 
         <p:dialog header="Hinweis" widgetVar="impressumDlg"
                   modal="true" closable="true"
@@ -75,12 +77,18 @@
         <h:form id="emissionsForm">
             <p:growl id="messages" showDetail="true" showSummary="false"/>
 
+            <h:panelGroup layout="block" style="margin:1em 0;">
+                <h:outputText value="Über die Filterfelder in der Tabelle können Sie gezielt nach Ländern, 
+                              Ländercodes, Jahren oder CO₂-Werten suchen. Nachkommastellen bitte mit Punkt eingeben (z. B. 0.1)." 
+                              style="color:#555;"/>
+            </h:panelGroup>
+
             <p:dataTable id="dataTable"
                          widgetVar="dataTable"
                          value="#{emissionBean.allEmissionsApproved}"
                          var="e"
-                         paginator="true" rows="20"
-                         filterEvent="keyup" filterDelay="300"
+                         paginator="true" rows="15"
+                         filterEvent="keyup" filterDelay="200"
                          currentPageReportTemplate="Einträge gesamt: {totalRecords}"
                          styleClass="p-datatable-sm"
                          style="width:100%;"
@@ -96,10 +104,10 @@
                                      placeholder="Land"
                                      maxlength="50"
                                      onkeyup="if (this.checkValidity()) {
-                                                     PF('dataTable').filter();
-                                                 } else {
-                                                     this.reportValidity();
-                                                 }"
+                                                 PF('dataTable').filter();
+                                             } else {
+                                                 this.reportValidity();
+                                             }"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
                                      pt:title="Nur Buchstaben erlaubt, auch Umlaute. Maximal 50 Zeichen."/>
                     </f:facet>
@@ -115,10 +123,10 @@
                                      placeholder="Code"
                                      maxlength="3"
                                      onkeyup="if (this.checkValidity()) {
-                                                     PF('dataTable').filter();
-                                                 } else {
-                                                     this.reportValidity();
-                                                 }"
+                                                 PF('dataTable').filter();
+                                             } else {
+                                                 this.reportValidity();
+                                             }"
                                      pt:pattern="[A-Za-z]{1,3}"
                                      pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
                     </f:facet>
@@ -134,10 +142,10 @@
                                      placeholder="Jahr"
                                      maxlength="4"
                                      onkeyup="if (this.checkValidity()) {
-                                                     PF('dataTable').filter();
-                                                 } else {
-                                                     this.reportValidity();
-                                                 }"
+                                                 PF('dataTable').filter();
+                                             } else {
+                                                 this.reportValidity();
+                                             }"
                                      pt:pattern="\d{4}"
                                      pt:title="Vier Zahlen erforderlich, z.B. 1950."/>
                     </f:facet>
