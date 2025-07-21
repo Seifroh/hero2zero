@@ -8,35 +8,35 @@
     <h:head>
         <meta charset="UTF-8"/>
         <title>Like Hero to Zero | Wissenschaftler</title>
-        <h:outputStylesheet library="nova-light" name="theme.css"/>
+        <h:outputStylesheet library="primefaces-nova-light" name="theme.css"/>
     </h:head>
     <h:body>
         <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
-            <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5em">
+            <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5em;">
                 <h:graphicImage library="images"
                                 name="logo.png"
                                 alt="Hero2Zero Logo"
                                 height="80"/>
-                <h:outputText value="Like Hero to Zero"
-                              style="font-weight:bold; font-size:1.5em; color:#333"/>
+                <h:outputText value="Like Hero to Zero - Wissenschaftsbereich"
+                              style="font-weight:bold; font-size:1.7em; color:#333; "/>
             </p:toolbarGroup>
 
             <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
-
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
                               icon="pi pi-sign-in"
                               outcome="login"
                               styleClass="ui-button-sm"/>
                 </h:panelGroup>
-
                 <h:panelGroup rendered="#{loginBean.loggedIn}">
-                    <!--<p:button value="Datenpflege"
+                    <!-- Datenpflege-Button bleibt auskommentiert für spätere Nutzung -->
+                    <!--
+                    <p:button value="Datenpflege"
                               icon="pi pi-database"
                               outcome="/admin/emissions-edit.xhtml"
-                              styleClass="ui-button-sm"/>-->
-
-                    <h:form prependId="false" style="display:inline">
+                              styleClass="ui-button-sm"/>
+                    -->
+                    <h:form prependId="false" style="display:inline;">
                         <p:commandButton value="Logout"
                                          icon="pi pi-sign-out"
                                          action="#{loginBean.logout()}"
@@ -44,12 +44,10 @@
                                          styleClass="ui-button-sm"/>
                     </h:form>
                 </h:panelGroup>
-
                 <p:button value="Home"
                           icon="pi pi-home"
                           outcome="/emissions.xhtml"
                           styleClass="ui-button-sm"/>
-
                 <p:button value="Impressum"
                           icon="pi pi-info-circle"
                           onclick="PF('impressumDlg').show();return false;"
@@ -68,21 +66,38 @@
         <p:dialog header="Hinweis" widgetVar="impressumDlg"
                   modal="true" closable="true"
                   draggable="false" resizable="false">
-            <h:outputText value="Uniprojekt – kein formelles Impressum notwendig."/>
+            <h:outputText value="Uniprojekt – keine kommerzielle Nutzung."/>
         </p:dialog>
 
         <h:form id="adminForm">
 
-            <p:growl id="messages" showDetail="true" showSummary="false"/>
+            <!-- Growl für Meldungen -->
+            <p:growl id="messages" showDetail="true" showSummary="false" life="5000"/>
 
-            <h:panelGroup layout="block" style="margin-bottom:1em">
-                <p:commandButton value="Neuer Eintrag"
-                                 icon="pi pi-plus"
-                                 oncomplete="PF('newDlg').show()"
-                                 process="@this"
-                                 styleClass="ui-button-sm"/>
-            </h:panelGroup>
+            <!-- Toolbar mit "Neue Emission" und ggf. späterem "Admin"-Button -->
+            <p:toolbar style="margin-bottom:1em">
+                <p:toolbarGroup>
+                    <p:commandButton id="btnNew"
+                                     value="Neue Emission"
+                                     icon="pi pi-plus"
+                                     styleClass="ui-button-sm"
+                                     oncomplete="PF('dlgNewEmission').show()"
+                                     process="@this"
+                                     update="@form:messages"/>
+                </p:toolbarGroup>
+                <!-- Beispiel für späteren Admin-Button:
+                <p:toolbarGroup align="right">
+                    <p:commandButton id="btnAdmin"
+                                     value="Admin"
+                                     icon="pi pi-user"
+                                     styleClass="ui-button-sm"
+                                     action="#{emissionsAdminBean.goAdmin}"
+                                     update=":adminForm:dataTable :adminForm:messages"/>
+                </p:toolbarGroup>
+                -->
+            </p:toolbar>
 
+            <!-- Editable DataTable -->
             <p:dataTable id="dataTable"
                          widgetVar="adminTable"
                          value="#{emissionsAdminBean.allEmissions}"
@@ -92,124 +107,136 @@
                          filterEvent="keyup" filterDelay="200"
                          style="width:100%">
 
-                <p:column headerText="ID" style="width:10%">
-                    #{e.id}
+                <p:column headerText="ID" style="width:8%">
+                    <h:outputText value="#{e.id}"/>
                 </p:column>
 
-                <p:column headerText="Land"
-                          filterBy="#{e.country}"
-                          filterMatchMode="contains"
-                          style="width:20%">
+                <p:column headerText="Land" style="width:20%"
+                          filterBy="#{e.country}" filterMatchMode="contains">
                     <f:facet name="filter">
-                        <p:inputText placeholder="Land"
+                        <p:inputText id="filterCountry"
+                                     placeholder="Land"
                                      style="width:100%"
                                      maxlength="50"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
-                                     pt:title="Nur Buchstaben erlaubt. Maximal 50 Zeichen."
+                                     pt:title="Nur Buchstaben. Maximal 50 Zeichen."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
-                    #{e.country}
+                    <h:outputText value="#{e.country}"/>
                 </p:column>
 
-                <p:column headerText="Code"
-                          filterBy="#{e.countryCode}"
-                          filterMatchMode="contains"
-                          style="width:15%">
+                <p:column headerText="Code" style="width:12%"
+                          filterBy="#{e.countryCode}" filterMatchMode="contains">
                     <f:facet name="filter">
-                        <p:inputText placeholder="Code"
+                        <p:inputText id="filterCode"
+                                     placeholder="Code"
                                      style="width:100%"
                                      maxlength="3"
                                      pt:pattern="[A-Za-z]{1,3}"
-                                     pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."
+                                     pt:title="Bis zu 3 Buchstaben. Keine Umlaute."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
-                    #{e.countryCode}
+                    <h:outputText value="#{e.countryCode}"/>
                 </p:column>
 
-                <p:column headerText="Jahr"
-                          filterBy="#{e.year}"
-                          filterMatchMode="equals"
-                          style="width:15%">
+                <p:column headerText="Jahr" style="width:12%"
+                          filterBy="#{e.year}" filterMatchMode="equals">
                     <f:facet name="filter">
-                        <p:inputText placeholder="Jahr"
+                        <p:inputText id="filterYear"
+                                     placeholder="Jahr"
                                      style="width:100%"
                                      maxlength="4"
                                      pt:pattern="\d{4}"
-                                     pt:title="Vier Zahlen erforderlich, z. B. 1950."
+                                     pt:title="4 Ziffern, z. B. 1950."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
-                    #{e.year}
+                    <h:outputText value="#{e.year}"/>
                 </p:column>
 
-                <p:column headerText="CO₂ (kt)"
+                <p:column headerText="CO₂ (kt)" style="width:15%"
                           filterBy="#{e.co2Emissions}"
-                          filterFunction="#{filterUtil.co2Filter}"
-                          style="width:15%">
+                          filterFunction="#{filterUtil.co2Filter}">
                     <f:facet name="filter">
-                        <p:inputText placeholder="CO₂"
+                        <p:inputText id="filterCo2"
+                                     placeholder="CO₂"
                                      style="width:100%"
                                      maxlength="10"
                                      pt:pattern="\d+(\.\d+)?"
-                                     pt:title="Nur Zahlen erlaubt. Nachkommastellen bitte mit Punkt schreiben (z. B. 0.1)."
+                                     pt:title="Nur Zahlen. Nachkommastellen mit Punkt."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
                     <p:cellEditor>
-                        <f:facet name="output">#{e.co2Emissions}</f:facet>
+                        <f:facet name="output">
+                            <h:outputText value="#{e.co2Emissions}"/>
+                        </f:facet>
                         <f:facet name="input">
-                            <p:inputText value="#{e.co2Emissions}" style="width:100%"/>
+                            <p:inputText value="#{e.co2Emissions}"
+                                         style="width:100%"/>
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
 
+                <!-- Freigabe -->
+                <p:column headerText="Freigabe" style="width:10%">
+                    <h:panelGroup>
+                        <h:outputText value="Ja" rendered="#{e.approved}"/>
+                        <p:commandButton id="btnApprove"
+                                         value="Freigeben"
+                                         icon="pi pi-check"
+                                         styleClass="ui-button-sm"
+                                         action="#{emissionsAdminBean.approve(e)}"
+                                         update=":adminForm:dataTable :adminForm:messages"
+                                         rendered="#{!e.approved}"/>
+                    </h:panelGroup>
+                </p:column>
+
+                <!-- Ajax-Listener für Cell-Edit -->
                 <p:ajax event="cellEdit"
                         listener="#{emissionsAdminBean.onCellEdit}"
                         update=":adminForm:messages"/>
-
-                <p:column headerText="Freigabe" style="width:15%">
-                    <h:panelGroup>
-                        <h:outputText value="Ja" rendered="#{e.approved}"/>
-                        <p:commandButton value="Freigeben"
-                                         icon="pi pi-check"
-                                         action="#{emissionsAdminBean.approve(e)}"
-                                         update=":adminForm:dataTable :adminForm:messages"
-                                         rendered="#{!e.approved}"
-                                         styleClass="ui-button-sm"/>
-                    </h:panelGroup>
-                </p:column>
             </p:dataTable>
-            <!-- Der Dialog zum Neuanlegen -->
-            <p:dialog header="Neue Emission"
-                      widgetVar="newDlg"
+
+            <!-- Dialog zur Anlage einer neuen Emission -->
+            <p:dialog id="dlgNewEmission"
+                      header="Neue Emission anlegen"
+                      widgetVar="dlgNewEmission"
                       modal="true"
                       closable="true"
                       resizable="false">
-                <h:panelGrid columns="2" cellpadding="5">
-                    <h:outputLabel for="country" value="Land:"/>
-                    <p:inputText id="country"
-                                 value="#{emissionsAdminBean.newEmission.country}"
-                                 required="true"/>
 
-                    <h:outputLabel for="code" value="Code:"/>
-                    <p:inputText id="code"
-                                 value="#{emissionsAdminBean.newEmission.countryCode}"
-                                 required="true"/>
+                <h:panelGrid id="gridNew" columns="2" cellpadding="5">
+                    <h:outputLabel for="countrySelect" value="Land:"/>
+                    <p:selectOneMenu id="countrySelect"
+                                     value="#{emissionsAdminBean.newEmission.countryCode}"
+                                     required="true"
+                                     style="width:100%">
+                        <f:selectItem itemLabel="Bitte wählen ..." itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{emissionsAdminBean.availableCountries}"
+                                       var="c"
+                                       itemLabel="#{c.country} (#{c.countryCode})"
+                                       itemValue="#{c.countryCode}"/>
+                    </p:selectOneMenu>
 
-                    <h:outputLabel for="year" value="Jahr:"/>
-                    <p:inputText id="year"
+                    <h:outputLabel for="inYear" value="Jahr:"/>
+                    <p:inputText id="inYear"
                                  value="#{emissionsAdminBean.newEmission.year}"
                                  required="true"
-                                 maxlength="4"/>
+                                 maxlength="4"
+                                 label="Jahr"/>
 
-                    <h:outputLabel for="co2" value="CO₂ (kt):"/>
-                    <p:inputText id="co2"
-                                 value="#{emissionsAdminBean.newEmission.co2Emissions}"/>
+                    <h:outputLabel for="inCo2" value="CO₂ (kt):"/>
+                    <p:inputText id="inCo2"
+                                 value="#{emissionsAdminBean.newEmission.co2Emissions}"
+                                 label="CO₂"/>
                 </h:panelGrid>
 
                 <p:commandButton value="Speichern"
-                                 action="#{emissionsAdminBean.saveNew}"
+                                 icon="pi pi-save"
+                                 styleClass="ui-button-primary"
                                  process="@form"
+                                 action="#{emissionsAdminBean.saveNew}"
                                  update=":adminForm:dataTable :adminForm:messages"
-                                 oncomplete="PF('newDlg').hide()"/>
+                                 oncomplete="PF('dlgNewEmission').hide()"/>
             </p:dialog>
         </h:form>
     </h:body>

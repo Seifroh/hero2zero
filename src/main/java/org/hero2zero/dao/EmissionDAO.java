@@ -50,4 +50,21 @@ public class EmissionDAO {
     public void update(CountryEmission emission) {
         em.merge(emission);
     }
+
+    public boolean existsByCountryCodeAndYear(String countryCode, int year) {
+        Long count = (Long) em.createQuery(
+                "SELECT COUNT(e) FROM CountryEmission e WHERE e.countryCode = :code AND e.year = :year")
+                .setParameter("code", countryCode)
+                .setParameter("year", year)
+                .getSingleResult();
+        return count > 0;
+    }
+
+    public List<CountryEmission> findDistinctCountries() {
+        return em.createQuery(
+                "SELECT DISTINCT new org.hero2zero.entity.CountryEmission(e.country, e.countryCode) "
+                + "FROM CountryEmission e ORDER BY e.country", CountryEmission.class)
+                .getResultList();
+    }
+
 }

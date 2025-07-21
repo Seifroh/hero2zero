@@ -23,12 +23,14 @@ public class EmissionsAdminBean implements Serializable {
 
     private List<CountryEmission> allEmissions;
     private CountryEmission newEmission;
+    private List<CountryEmission> availableCountries;
 
     @PostConstruct
     public void init() {
         // alle Datensätze, auch unfreigegebene
         allEmissions = dao.listAll();
         newEmission = new CountryEmission();
+        availableCountries = dao.findDistinctCountries();
     }
 
     public List<CountryEmission> getAllEmissions() {
@@ -56,6 +58,15 @@ public class EmissionsAdminBean implements Serializable {
     }
 
     public void saveNew() {
+        // Dublettenprüfung
+        if (dao.existsByCountryCodeAndYear(newEmission.getCountryCode(), newEmission.getYear())) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Eintrag existiert bereits!",
+                            "Für dieses Land und Jahr gibt es schon einen Datensatz."));
+            return; // Speichern abbrechen
+        }
+
         // neu angelegte Einträge sind standardmäßig approved=false
         dao.create(newEmission);
         allEmissions = dao.listAll();
@@ -63,4 +74,9 @@ public class EmissionsAdminBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage("Neuer Datensatz angelegt"));
     }
+
+    public List<CountryEmission> getAvailableCountries() {
+        return availableCountries;
+    }
+
 }

@@ -73,4 +73,13 @@ public class CountryEmission {
     public void setApproved(boolean approved) {
         this.approved = approved;
     }
+
+    public CountryEmission() {
+
+    }
+
+    public CountryEmission(String country, String countryCode) {
+        this.country = country;
+        this.countryCode = countryCode;
+    }
 }
