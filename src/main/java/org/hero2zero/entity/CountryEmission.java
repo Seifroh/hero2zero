@@ -82,4 +82,15 @@ public class CountryEmission {
         this.country = country;
         this.countryCode = countryCode;
     }
+    
+    @Column(name = "change_log", nullable = true, length = 500)
+    private String changeLog;
+
+    public String getChangeLog() {
+        return changeLog;
+    }
+
+    public void setChangeLog(String changeLog) {
+        this.changeLog = changeLog;
+    }
 }

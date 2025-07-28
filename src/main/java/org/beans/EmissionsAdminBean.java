@@ -11,6 +11,7 @@ import org.hero2zero.entity.CountryEmission;
 import org.primefaces.event.CellEditEvent;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Arrays;
 
 @Named
 @ViewScoped
@@ -44,15 +45,50 @@ public class EmissionsAdminBean implements Serializable {
     public void onCellEdit(CellEditEvent event) {
         int row = event.getRowIndex();
         CountryEmission edited = allEmissions.get(row);
-        dao.update(edited);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("CO₂-Wert aktualisiert",
-                        "Neuer Wert: " + edited.getCo2Emissions()));
+
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        // Falls Wert wirklich geändert wurde
+        if (newValue != null && !newValue.equals(oldValue)) {
+            String username = FacesContext.getCurrentInstance()
+                    .getExternalContext().getUserPrincipal().getName();
+
+            String logEntry = String.format(
+                    "%s %s: %s → %s; ",
+                    java.time.LocalDate.now(),
+                    username,
+                    oldValue,
+                    newValue
+            );
+
+            String prevLog = edited.getChangeLog();
+            if (prevLog != null) {
+                // z.B. nur die letzten 2 Einträge behalten
+                String[] parts = prevLog.split(";");
+                prevLog = (parts.length > 2)
+                        ? String.join(";", Arrays.copyOfRange(parts, parts.length - 2, parts.length)) + ";"
+                        : prevLog;
+            } else {
+                prevLog = "";
+            }
+
+            edited.setChangeLog(prevLog + logEntry);
+
+            edited.setApproved(false);
+            dao.update(edited);
+            allEmissions = dao.listAll();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage("CO₂-Wert geändert, Änderung protokolliert, Freigabe zurückgesetzt."));
+        }
     }
 
     public void approve(CountryEmission e) {
         e.setApproved(true);
         dao.update(e);
+        allEmissions = dao.listAll();
+
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage("Datensatz freigegeben", "ID: " + e.getId()));
     }

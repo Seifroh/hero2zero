@@ -127,6 +127,7 @@
 
                 <p:column headerText="Code" style="width:12%"
                           filterBy="#{e.countryCode}" filterMatchMode="contains">
+
                     <f:facet name="filter">
                         <p:inputText id="filterCode"
                                      placeholder="Code"
@@ -156,6 +157,7 @@
                 <p:column headerText="CO₂ (kt)" style="width:15%"
                           filterBy="#{e.co2Emissions}"
                           filterFunction="#{filterUtil.co2Filter}">
+
                     <f:facet name="filter">
                         <p:inputText id="filterCo2"
                                      placeholder="CO₂"
@@ -165,6 +167,7 @@
                                      pt:title="Nur Zahlen. Nachkommastellen mit Punkt."
                                      onkeyup="PF('adminTable').filter()"/>
                     </f:facet>
+                    <p:rowEditor />
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{e.co2Emissions}"/>
@@ -190,10 +193,14 @@
                     </h:panelGroup>
                 </p:column>
 
+                <p:column headerText="Change-Log" style="width:25%">
+                    <h:outputText value="#{e.changeLog}"/>
+                </p:column>
+
                 <!-- Ajax-Listener für Cell-Edit -->
                 <p:ajax event="cellEdit"
                         listener="#{emissionsAdminBean.onCellEdit}"
-                        update=":adminForm:messages"/>
+                        update=":adminForm:dataTable :adminForm:messages"/>
             </p:dataTable>
 
             <!-- Dialog zur Anlage einer neuen Emission -->
