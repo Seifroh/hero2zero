@@ -21,6 +21,7 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>user</role-name>
+            <role-name>admin</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -34,6 +35,10 @@
 
     <security-role>
         <role-name>user</role-name>
+    </security-role>
+    
+    <security-role>
+        <role-name>admin</role-name>
     </security-role>
 
     <servlet>

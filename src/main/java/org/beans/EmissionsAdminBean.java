@@ -28,10 +28,20 @@ public class EmissionsAdminBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // alle Datensätze, auch unfreigegebene
-        allEmissions = dao.listAll();
+        reloadList();
         newEmission = new CountryEmission();
         availableCountries = dao.findDistinctCountries();
+    }
+
+    private void reloadList() {
+        boolean isAdmin = FacesContext.getCurrentInstance()
+                .getExternalContext()
+                .isUserInRole("admin");
+        if (isAdmin) {
+            allEmissions = dao.listAll();
+        } else {
+            allEmissions = dao.findAllApproved();
+        }
     }
 
     public List<CountryEmission> getAllEmissions() {
@@ -45,49 +55,21 @@ public class EmissionsAdminBean implements Serializable {
     public void onCellEdit(CellEditEvent event) {
         int row = event.getRowIndex();
         CountryEmission edited = allEmissions.get(row);
-
-        Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
-
-        // Falls Wert wirklich geändert wurde
-        if (newValue != null && !newValue.equals(oldValue)) {
-            String username = FacesContext.getCurrentInstance()
-                    .getExternalContext().getUserPrincipal().getName();
-
-            String logEntry = String.format(
-                    "%s %s: %s → %s; ",
-                    java.time.LocalDate.now(),
-                    username,
-                    oldValue,
-                    newValue
-            );
-
-            String prevLog = edited.getChangeLog();
-            if (prevLog != null) {
-                // z.B. nur die letzten 2 Einträge behalten
-                String[] parts = prevLog.split(";");
-                prevLog = (parts.length > 2)
-                        ? String.join(";", Arrays.copyOfRange(parts, parts.length - 2, parts.length)) + ";"
-                        : prevLog;
-            } else {
-                prevLog = "";
-            }
-
-            edited.setChangeLog(prevLog + logEntry);
-
+        if (newValue != null && !newValue.equals(event.getOldValue())) {
+            edited.setCo2Emissions((Double) newValue);
             edited.setApproved(false);
             dao.update(edited);
-            allEmissions = dao.listAll();
-
+            reloadList();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage("CO₂-Wert geändert, Änderung protokolliert, Freigabe zurückgesetzt."));
+                    new FacesMessage("Geändert und Liste neu geladen"));
         }
     }
 
     public void approve(CountryEmission e) {
         e.setApproved(true);
         dao.update(e);
-        allEmissions = dao.listAll();
+        reloadList();
 
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage("Datensatz freigegeben", "ID: " + e.getId()));
@@ -105,7 +87,7 @@ public class EmissionsAdminBean implements Serializable {
 
         // neu angelegte Einträge sind standardmäßig approved=false
         dao.create(newEmission);
-        allEmissions = dao.listAll();
+        reloadList();
         newEmission = new CountryEmission();
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage("Neuer Datensatz angelegt"));
@@ -114,5 +96,24 @@ public class EmissionsAdminBean implements Serializable {
     public List<CountryEmission> getAvailableCountries() {
         return availableCountries;
     }
+    private String selectedCountryCode;
 
+    public void setSelectedCountryCode(String code) {
+        this.selectedCountryCode = code;
+    }
+
+    public String getSelectedCountryCode() {
+        return selectedCountryCode;
+    }
+
+    public void onCountryCodeChange() {
+        // Finde das Country-Objekt zur gewählten Code
+        for (CountryEmission c : availableCountries) {
+            if (c.getCountryCode().equals(selectedCountryCode)) {
+                newEmission.setCountryCode(c.getCountryCode());
+                newEmission.setCountry(c.getCountry());
+                break;
+            }
+        }
+    }
 }

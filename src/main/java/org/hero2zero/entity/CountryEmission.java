@@ -82,7 +82,7 @@ public class CountryEmission {
         this.country = country;
         this.countryCode = countryCode;
     }
-    
+
     @Column(name = "change_log", nullable = true, length = 500)
     private String changeLog;
 

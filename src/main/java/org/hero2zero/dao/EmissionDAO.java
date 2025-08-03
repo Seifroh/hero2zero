@@ -24,13 +24,6 @@ public class EmissionDAO {
                 .getResultList();
     }
 
-    public List<CountryEmission> findByContinent(String continent) {
-        return em.createQuery(
-                "SELECT c FROM CountryEmission c WHERE c.continent = :continent", CountryEmission.class)
-                .setParameter("continent", continent)
-                .getResultList();
-    }
-
     public List<CountryEmission> findAll() {
         return em.createQuery("SELECT c FROM CountryEmission c", CountryEmission.class)
                 .getResultList();
@@ -49,6 +42,30 @@ public class EmissionDAO {
 
     public void update(CountryEmission emission) {
         em.merge(emission);
+    }
+
+    public boolean existsByCountry(String country) {
+        Long cnt = em.createQuery(
+                "SELECT COUNT(e) FROM CountryEmission e WHERE e.country = :c", Long.class)
+                .setParameter("c", country)
+                .getSingleResult();
+        return cnt > 0;
+    }
+
+    public List<CountryEmission> findByCountry(String country) {
+        return em.createQuery(
+                "SELECT e FROM CountryEmission e WHERE e.country = :c", CountryEmission.class)
+                .setParameter("c", country)
+                .getResultList();
+    }
+
+    public boolean existsByCountryCode(String code) {
+        Long count = em.createQuery(
+                "SELECT COUNT(e) FROM CountryEmission e WHERE e.countryCode = :code",
+                Long.class)
+                .setParameter("code", code)
+                .getSingleResult();
+        return count > 0;
     }
 
     public boolean existsByCountryCodeAndYear(String countryCode, int year) {

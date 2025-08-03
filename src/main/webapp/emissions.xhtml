@@ -20,7 +20,6 @@
                               style="font-weight:bold; font-size:1.7em; color:#333; "/>
             </p:toolbarGroup>
 
-            <!-- Rechte Toolbar: nur Buttons -->
             <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
 
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
@@ -56,17 +55,12 @@
                           styleClass="ui-button-sm"/>
             </p:toolbarGroup>
         </p:toolbar>
-        <!-- Loginstatus darunter -->
+
         <h:panelGroup rendered="#{loginBean.loggedIn}" layout="block"
                       style="text-align:right; padding:0 1em 0.5em 1em;">
             <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
                           style="color:#333; font-style:italic;"/>
         </h:panelGroup>
-
-         <!-- <h:outputText value="TEST: #{filterUtil != null ? 'Bean geladen' : 'Bean NICHT geladen'}" style="color:red"/>
-
-        <h:outputText value="loginBean.loggedIn=#{loginBean.loggedIn}" 
-                      style="color:red; font-weight:bold; margin-left:1em"/> -->
 
         <p:dialog header="Hinweis" widgetVar="impressumDlg"
                   modal="true" closable="true"
@@ -79,9 +73,24 @@
 
             <h:panelGroup layout="block" style="margin:1em 0;">
                 <h:outputText value="Über die Filterfelder in der Tabelle können Sie gezielt nach Ländern, 
-                              Ländercodes, Jahren oder CO₂-Werten suchen. Nachkommastellen bitte mit Punkt eingeben (z. B. 0.1)." 
+                              Ländercodes, Jahren oder CO₂-Werten suchen. Nachkommastellen bitte mit Punkt eingeben (z. B. 0.1). 
+                              Diese Webseite ist ein Prototyp und befindet sich in der Entwicklung. 
+                              Die Texte/Beschriftungen sind auf deutsch; Tabelleninhalte und Zahlenformate sind englisch." 
                               style="color:#555;"/>
             </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty emissionBean.vorauswahlHinweis}"
+                          layout="block"
+                          style="margin:1em 0">
+                <h:outputText value="#{emissionBean.vorauswahlHinweis}" 
+                              style="color:#555;"/>
+            </h:panelGroup>
+
+            <p:commandButton value="Alle Länder"
+                             icon="pi pi-globe"
+                             rendered="#{!emissionBean.alleLaender}"
+                             action="#{emissionBean.ladeAlle}"
+                             update="@form"/>
 
             <p:dataTable id="dataTable"
                          widgetVar="dataTable"
@@ -118,17 +127,19 @@
                           filterBy="#{e.countryCode}"
                           filterMatchMode="contains"
                           style="width:25%">
+
                     <f:facet name="filter">
-                        <p:inputText style="width:100%"
-                                     placeholder="Code"
-                                     maxlength="3"
-                                     onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
-                                     pt:pattern="[A-Za-z]{1,3}"
-                                     pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
+                        <p:inputText 
+                            style="width:100%"
+                            placeholder="Code"
+                            maxlength="3"
+                            onkeyup="if (this.checkValidity()) {
+                                        PF('dataTable').filter();
+                                    } else {
+                                        this.reportValidity();
+                                    }"
+                            pt:pattern="[A-Za-z]{1,3}"
+                            pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
                     </f:facet>
                     #{e.countryCode}
                 </p:column>
@@ -175,6 +186,5 @@
             <h:outputText value="Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE"
                           style="font-weight:bold"/>
         </h:panelGroup>
-
     </h:body>
 </html>
