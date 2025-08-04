@@ -84,4 +84,36 @@ public class EmissionDAO {
                 .getResultList();
     }
 
+    public CountryEmission findLatestApprovedByCountry(String country) {
+        List<CountryEmission> list = em.createQuery(
+                "SELECT e FROM CountryEmission e "
+                + "WHERE e.country = :c AND e.approved = true "
+                + "ORDER BY e.year DESC", CountryEmission.class)
+                .setParameter("c", country)
+                .setMaxResults(1)
+                .getResultList();
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    public boolean existsNewerPending(String country, int year) {
+        Long cnt = em.createQuery(
+                "SELECT COUNT(e) FROM CountryEmission e "
+                + "WHERE e.country = :c AND e.approved = false AND e.year > :y",
+                Long.class)
+                .setParameter("c", country)
+                .setParameter("y", year)
+                .getSingleResult();
+        return cnt > 0;
+    }
+
+    public List<Object[]> findCountriesWithCode() {
+        return em.createQuery(
+                "SELECT DISTINCT e.country, e.countryCode "
+                + "FROM CountryEmission e "
+                + "WHERE e.country IS NOT NULL AND e.countryCode IS NOT NULL "
+                + "ORDER BY e.country", Object[].class)
+                .getResultList();
+    }
+
 }

@@ -4,6 +4,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
     <h:head>
         <meta charset="UTF-8"/>
         <title>Like Hero to Zero | CO₂-Emissionen</title>
@@ -70,6 +71,7 @@
 
         <h:form id="emissionsForm">
             <p:growl id="messages" showDetail="true" showSummary="false"/>
+            <p:growl id="infoGrowl" showDetail="true" showSummary="false"/>
 
             <h:panelGroup layout="block" style="margin:1em 0;">
                 <h:outputText value="Über die Filterfelder in der Tabelle können Sie gezielt nach Ländern, 
@@ -86,11 +88,21 @@
                               style="color:#555;"/>
             </h:panelGroup>
 
-            <p:commandButton value="Alle Länder"
+            <p:accordionPanel multiple="false" activeIndex="-1" style="margin:1em 0">
+                <p:tab title="Alle verfügbaren Länder">
+                    <p:inputTextarea id="allCountries"
+                                     value="#{emissionBean.countryListText}"
+                                     readonly="true"
+                                     rows="5"
+                                     style="width:100%"/>
+                </p:tab>
+            </p:accordionPanel>
+
+            <p:commandButton value="Alle Daten"
                              icon="pi pi-globe"
-                             rendered="#{!emissionBean.alleLaender}"
                              action="#{emissionBean.ladeAlle}"
-                             update="@form"/>
+                             update="@form dataTable"                
+                             oncomplete="PF('dataTable').clearFilters();"/>
 
             <p:dataTable id="dataTable"
                          widgetVar="dataTable"
@@ -109,14 +121,15 @@
                           filterMatchMode="contains"
                           style="width:25%">
                     <f:facet name="filter">
-                        <p:inputText style="width:100%"
+                        <p:inputText value="#{emissionBean.selectedCountry}"
                                      placeholder="Land"
+                                     style="width:100%"
                                      maxlength="50"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
+                                             PF('dataTable').filter();
+                                         } else {
+                                             this.reportValidity();
+                                         }"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
                                      pt:title="Nur Buchstaben erlaubt, auch Umlaute. Maximal 50 Zeichen."/>
                     </f:facet>
@@ -134,10 +147,10 @@
                             placeholder="Code"
                             maxlength="3"
                             onkeyup="if (this.checkValidity()) {
-                                        PF('dataTable').filter();
-                                    } else {
-                                        this.reportValidity();
-                                    }"
+                                    PF('dataTable').filter();
+                                } else {
+                                    this.reportValidity();
+                                }"
                             pt:pattern="[A-Za-z]{1,3}"
                             pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
                     </f:facet>
@@ -149,14 +162,15 @@
                           filterMatchMode="equals"
                           style="width:25%">
                     <f:facet name="filter">
-                        <p:inputText style="width:100%"
+                        <p:inputText value="#{emissionBean.selectedYear}" 
                                      placeholder="Jahr"
+                                     style="width:100%"
                                      maxlength="4"
                                      onkeyup="if (this.checkValidity()) {
-                                                 PF('dataTable').filter();
-                                             } else {
-                                                 this.reportValidity();
-                                             }"
+                                             PF('dataTable').filter();
+                                         } else {
+                                             this.reportValidity();
+                                         }"
                                      pt:pattern="\d{4}"
                                      pt:title="Vier Zahlen erforderlich, z.B. 1950."/>
                     </f:facet>
