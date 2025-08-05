@@ -90,7 +90,7 @@
                          value="#{emissionsAdminBean.allEmissions}"
                          var="e"
                          editable="true" editMode="cell"
-                         paginator="true" rows="15"
+                         paginator="true" rows="10"
                          filterEvent="keyup" filterDelay="200"
                          style="width:100%">
 
@@ -200,12 +200,18 @@
 
             <!-- neues Formular nur für den Dialog -->
             <h:form id="newEmissionForm">
+                <p:messages id="newEmissionMessages"
+                            showDetail="true"
+                            showSummary="false"
+                            style="margin-bottom:1em"/>
+
                 <h:panelGrid columns="2" cellpadding="5">
 
                     <h:outputLabel for="countrySelect" value="Land:"/>
                     <p:selectOneMenu id="countrySelect"
                                      value="#{emissionsAdminBean.selectedCountryCode}"
-                                     required="true" style="width:100%">
+                                     required="true" 
+                                     style="width:100%">
                         <f:selectItem itemLabel="Bitte wählen ..." itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{emissionsAdminBean.availableCountries}"
                                        var="c"
@@ -213,6 +219,7 @@
                                        itemValue="#{c.countryCode}"/>
                         <p:ajax event="valueChange"
                                 listener="#{emissionsAdminBean.onCountryCodeChange}"
+                                update="newEmissionForm:newEmissionMessages"
                                 process="@this"/>
                     </p:selectOneMenu>
 
@@ -227,15 +234,22 @@
                                  value="#{emissionsAdminBean.newEmission.co2Emissions}"
                                  label="CO₂"/>
                 </h:panelGrid>
-
                 <p:commandButton value="Speichern"
                                  icon="pi pi-save"
                                  styleClass="ui-button-primary"
                                  process="@form"
                                  action="#{emissionsAdminBean.saveNew}"
-                                 update=":adminForm:dataTable :adminForm:messages"
+                                 update="newEmissionForm:newEmissionMessages 
+                                 :adminForm:dataTable 
+                                 :adminForm:messages"              
                                  oncomplete="PF('dlgNewEmission').hide()"/>
             </h:form>
         </p:dialog>
+
+        <h:panelGroup layout="block"
+                      style="text-align:center; padding:0.5em; background:#f7f2e8">
+            <h:outputText value="Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE"
+                          style="font-weight:bold"/>
+        </h:panelGroup>
     </h:body>
 </html>

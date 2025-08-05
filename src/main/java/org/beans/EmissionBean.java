@@ -85,7 +85,7 @@ public class EmissionBean implements Serializable {
             selectedYear = String.valueOf(ce.getYear());
             latestEmission = ce;
         }
-
+        
         /* 5 – Dropdown-Liste füllen ----------------------------------- */
         countryOptions = new ArrayList<>();
         for (Object[] row : dao.findCountriesWithCode()) {

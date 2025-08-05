@@ -11,7 +11,6 @@ import org.hero2zero.entity.CountryEmission;
 import org.primefaces.event.CellEditEvent;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Arrays;
 
 @Named
 @ViewScoped
@@ -25,6 +24,7 @@ public class EmissionsAdminBean implements Serializable {
     private List<CountryEmission> allEmissions;
     private CountryEmission newEmission;
     private List<CountryEmission> availableCountries;
+    private String selectedCountryCode;
 
     @PostConstruct
     public void init() {
@@ -44,25 +44,19 @@ public class EmissionsAdminBean implements Serializable {
         }
     }
 
-    public List<CountryEmission> getAllEmissions() {
-        return allEmissions;
-    }
-
-    public CountryEmission getNewEmission() {
-        return newEmission;
-    }
-
     public void onCellEdit(CellEditEvent event) {
         int row = event.getRowIndex();
         CountryEmission edited = allEmissions.get(row);
+
         Object newValue = event.getNewValue();
         if (newValue != null && !newValue.equals(event.getOldValue())) {
             edited.setCo2Emissions((Double) newValue);
             edited.setApproved(false);
             dao.update(edited);
             reloadList();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage("Geändert und Liste neu geladen"));
+            FacesContext.getCurrentInstance()
+                    .addMessage(null,
+                            new FacesMessage("Geändert und Liste neu geladen"));
         }
     }
 
@@ -70,44 +64,31 @@ public class EmissionsAdminBean implements Serializable {
         e.setApproved(true);
         dao.update(e);
         reloadList();
-
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Datensatz freigegeben", "ID: " + e.getId()));
+        FacesContext.getCurrentInstance()
+                .addMessage(null,
+                        new FacesMessage("Datensatz freigegeben", "ID: " + e.getId()));
     }
 
     public void saveNew() {
-        // Dublettenprüfung
-        if (dao.existsByCountryCodeAndYear(newEmission.getCountryCode(), newEmission.getYear())) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Eintrag existiert bereits!",
-                            "Für dieses Land und Jahr gibt es schon einen Datensatz."));
-            return; // Speichern abbrechen
+        if (dao.existsByCountryCodeAndYear(
+                newEmission.getCountryCode(), newEmission.getYear())) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    "Eintrag existiert bereits!",
+                                    "Für dieses Land und Jahr gibt es schon einen Datensatz."));
+            return;
         }
 
-        // neu angelegte Einträge sind standardmäßig approved=false
         dao.create(newEmission);
         reloadList();
         newEmission = new CountryEmission();
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Neuer Datensatz angelegt"));
-    }
-
-    public List<CountryEmission> getAvailableCountries() {
-        return availableCountries;
-    }
-    private String selectedCountryCode;
-
-    public void setSelectedCountryCode(String code) {
-        this.selectedCountryCode = code;
-    }
-
-    public String getSelectedCountryCode() {
-        return selectedCountryCode;
+        FacesContext.getCurrentInstance()
+                .addMessage(null,
+                        new FacesMessage("Neuer Datensatz angelegt"));
     }
 
     public void onCountryCodeChange() {
-        // Finde das Country-Objekt zur gewählten Code
         for (CountryEmission c : availableCountries) {
             if (c.getCountryCode().equals(selectedCountryCode)) {
                 newEmission.setCountryCode(c.getCountryCode());
@@ -116,4 +97,25 @@ public class EmissionsAdminBean implements Serializable {
             }
         }
     }
+
+    public List<CountryEmission> getAllEmissions() {
+        return allEmissions;
+    }
+
+    public CountryEmission getNewEmission() {
+        return newEmission;
+    }
+
+    public List<CountryEmission> getAvailableCountries() {
+        return availableCountries;
+    }
+
+    public String getSelectedCountryCode() {
+        return selectedCountryCode;
+    }
+
+    public void setSelectedCountryCode(String code) {
+        this.selectedCountryCode = code;
+    }
+
 }
