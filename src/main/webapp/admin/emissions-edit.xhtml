@@ -208,19 +208,27 @@
                 <h:panelGrid columns="2" cellpadding="5">
 
                     <h:outputLabel for="countrySelect" value="Land:"/>
+
                     <p:selectOneMenu id="countrySelect"
                                      value="#{emissionsAdminBean.selectedCountryCode}"
                                      required="true" 
+                                     requiredMessage="Bitte wählen Sie ein Land aus."
                                      style="width:100%">
-                        <f:selectItem itemLabel="Bitte wählen ..." itemValue="" noSelectionOption="true"/>
+
+                        <f:selectItem itemLabel="Bitte wählen ..." 
+                                      itemValue="" 
+                                      noSelectionOption="true"/>
+
                         <f:selectItems value="#{emissionsAdminBean.availableCountries}"
                                        var="c"
                                        itemLabel="#{c.country} (#{c.countryCode})"
                                        itemValue="#{c.countryCode}"/>
+
                         <p:ajax event="valueChange"
                                 listener="#{emissionsAdminBean.onCountryCodeChange}"
-                                update="newEmissionForm:newEmissionMessages"
-                                process="@this"/>
+                                process="@form"
+                                update="newEmissionForm:newEmissionMessages
+                                :adminForm:dataTable :adminForm:messages"/>                       
                     </p:selectOneMenu>
 
                     <h:outputLabel for="inYear" value="Jahr:"/>

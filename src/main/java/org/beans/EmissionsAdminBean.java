@@ -70,6 +70,8 @@ public class EmissionsAdminBean implements Serializable {
     }
 
     public void saveNew() {
+        onCountryCodeChange();
+
         if (dao.existsByCountryCodeAndYear(
                 newEmission.getCountryCode(), newEmission.getYear())) {
             FacesContext.getCurrentInstance()
@@ -79,6 +81,8 @@ public class EmissionsAdminBean implements Serializable {
                                     "Für dieses Land und Jahr gibt es schon einen Datensatz."));
             return;
         }
+        System.out.println("DEBUG newEmission.country    = " + newEmission.getCountry());
+        System.out.println("DEBUG newEmission.countryCode= " + newEmission.getCountryCode());
 
         dao.create(newEmission);
         reloadList();
@@ -89,9 +93,17 @@ public class EmissionsAdminBean implements Serializable {
     }
 
     public void onCountryCodeChange() {
+        // Wenn nichts ausgewählt ist, nichts tun
+        if (selectedCountryCode == null || selectedCountryCode.isBlank()) {
+            return;
+        }
         for (CountryEmission c : availableCountries) {
-            if (c.getCountryCode().equals(selectedCountryCode)) {
-                newEmission.setCountryCode(c.getCountryCode());
+            String code = c.getCountryCode();
+            // Nur vergleichen, wenn code nicht null
+            if (code != null && code.equals(selectedCountryCode)) {
+                // CountryCode setzen
+                newEmission.setCountryCode(code);
+                // immer das Land setzen
                 newEmission.setCountry(c.getCountry());
                 break;
             }
