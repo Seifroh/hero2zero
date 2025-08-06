@@ -69,6 +69,27 @@
             <h:outputText value="Uniprojekt – keine kommerzielle Nutzung."/>
         </p:dialog>
 
+        <p:accordionPanel multiple="false" activeIndex="-1" style="margin-bottom:1em">
+            <p:tab title="Zur Freigabe (#{emissionsAdminBean.pendingEmissions.size()})">
+                <p:dataTable value="#{emissionsAdminBean.pendingEmissions}"
+                             var="p" rows="5" paginator="true"
+                             style="width:100%">
+                    <p:column headerText="ID">
+                        <h:outputText value="#{p.id}" />
+                    </p:column>
+                    <p:column headerText="Land">
+                        <h:outputText value="#{p.country}" />
+                    </p:column>
+                    <p:column headerText="Jahr">
+                        <h:outputText value="#{p.year}" />
+                    </p:column>
+                    <p:column headerText="Änderung">
+                        <h:outputText value="#{p.changeLog}" />
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:accordionPanel>
+
         <h:form id="adminForm">
             <p:growl id="messages" showDetail="true" showSummary="false" life="5000"/>
 
@@ -94,12 +115,15 @@
                          filterEvent="keyup" filterDelay="200"
                          style="width:100%">
 
-                <p:column headerText="ID" style="width:8%">
+                <p:column headerText="ID" 
+                          style="width:7%">
                     <h:outputText value="#{e.id}"/>
                 </p:column>
 
-                <p:column headerText="Land" style="width:20%"
-                          filterBy="#{e.country}" filterMatchMode="contains">
+                <p:column headerText="Land" 
+                          style="width:20%"
+                          filterBy="#{e.country}" 
+                          filterMatchMode="contains">
                     <f:facet name="filter">
                         <p:inputText id="filterCountry"
                                      placeholder="Land"
@@ -113,7 +137,7 @@
                 </p:column>
 
                 <p:column headerText="Code" 
-                          style="width:12%"
+                          style="width:10%"
                           filterBy="#{e.countryCode}" 
                           filterMatchMode="contains">
 
@@ -129,7 +153,7 @@
                     <h:outputText value="#{e.countryCode}"/>
                 </p:column>
 
-                <p:column headerText="Jahr" style="width:12%"
+                <p:column headerText="Jahr" style="width:10%"
                           filterBy="#{e.year}" filterMatchMode="equals">
                     <f:facet name="filter">
                         <p:inputText id="filterYear"
@@ -143,7 +167,7 @@
                     <h:outputText value="#{e.year}"/>
                 </p:column>
 
-                <p:column headerText="CO₂ (kt)" style="width:15%"
+                <p:column headerText="CO₂ (kt)" style="width:12%"
                           filterBy="#{e.co2Emissions}"
                           filterFunction="#{filterUtil.co2Filter}">
 
@@ -168,12 +192,12 @@
                     </p:cellEditor>
                 </p:column>
 
-                <p:column headerText="Freigabe" style="width:10%" rendered="#{facesContext.externalContext.isUserInRole('admin')}">
+                <p:column headerText="Freigabe" style="width:11%" rendered="#{facesContext.externalContext.isUserInRole('admin')}">
                     <!-- nur für Admin sichtbar -->
                     <h:panelGroup>
                         <h:outputText value="Ja" rendered="#{e.approved}"/>
                         <p:commandButton id="btnApprove"
-                                         value="Freigeben"
+                                         value="Freigabe"
                                          icon="pi pi-check"
                                          styleClass="ui-button-sm"
                                          action="#{emissionsAdminBean.approve(e)}"
@@ -182,7 +206,19 @@
                     </h:panelGroup>
                 </p:column>
 
-                <p:column headerText="Change-Log" style="width:25%" rendered="#{facesContext.externalContext.isUserInRole('admin')}">
+                <p:column headerText="Aktionen" style="width:10%" rendered="#{facesContext.externalContext.isUserInRole('admin')}">
+                    <p:commandButton icon="pi pi-trash"
+                                     title="Datensatz löschen"
+                                     action="#{emissionsAdminBean.delete(e)}"
+                                     update=":adminForm:dataTable :adminForm:messages"
+                                     oncomplete="PF('confirmDlg').hide()">
+                        <p:confirm header="Bitte bestätigen" 
+                                   message="Wollen Sie Datensatz #{e.id} wirklich löschen?"
+                                   icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="Change-Log" style="width:30%" rendered="#{facesContext.externalContext.isUserInRole('admin')}">
                     <h:outputText value="#{e.changeLog}"/>
                 </p:column>
 
@@ -259,5 +295,10 @@
             <h:outputText value="Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE"
                           style="font-weight:bold"/>
         </h:panelGroup>
+        
+        <p:confirmDialog global="true" widgetVar="confirmDlg" showEffect="fade">
+            <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes"/>
+            <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no"/>
+        </p:confirmDialog>
     </h:body>
 </html>

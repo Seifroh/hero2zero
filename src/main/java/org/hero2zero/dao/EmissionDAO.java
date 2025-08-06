@@ -36,6 +36,13 @@ public class EmissionDAO {
                 .getResultList();
     }
 
+    public List<CountryEmission> findAllPending() {
+        return em.createQuery(
+                "SELECT c FROM CountryEmission c WHERE c.approved = false",
+                CountryEmission.class)
+                .getResultList();
+    }
+
     public void create(CountryEmission emission) {
         em.persist(emission);
     }
@@ -116,4 +123,10 @@ public class EmissionDAO {
                 .getResultList();
     }
 
+    public void delete(CountryEmission emission) {
+        CountryEmission toRemove = em.find(CountryEmission.class, emission.getId());
+        if (toRemove != null) {
+            em.remove(toRemove);
+        }
+    }
 }

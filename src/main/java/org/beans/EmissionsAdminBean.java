@@ -10,6 +10,7 @@ import org.hero2zero.dao.EmissionDAO;
 import org.hero2zero.entity.CountryEmission;
 import org.primefaces.event.CellEditEvent;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Named
@@ -24,11 +25,13 @@ public class EmissionsAdminBean implements Serializable {
     private List<CountryEmission> allEmissions;
     private CountryEmission newEmission;
     private List<CountryEmission> availableCountries;
+    private List<CountryEmission> pendingEmissions;
     private String selectedCountryCode;
 
     @PostConstruct
     public void init() {
         reloadList();
+        pendingEmissions = dao.findAllPending();
         newEmission = new CountryEmission();
         availableCountries = dao.findDistinctCountries();
     }
@@ -54,6 +57,7 @@ public class EmissionsAdminBean implements Serializable {
             edited.setApproved(false);
             dao.update(edited);
             reloadList();
+            pendingEmissions = dao.findAllPending();
             FacesContext.getCurrentInstance()
                     .addMessage(null,
                             new FacesMessage("Geändert und Liste neu geladen"));
@@ -64,6 +68,7 @@ public class EmissionsAdminBean implements Serializable {
         e.setApproved(true);
         dao.update(e);
         reloadList();
+        pendingEmissions = dao.findAllPending();
         FacesContext.getCurrentInstance()
                 .addMessage(null,
                         new FacesMessage("Datensatz freigegeben", "ID: " + e.getId()));
@@ -86,10 +91,15 @@ public class EmissionsAdminBean implements Serializable {
 
         dao.create(newEmission);
         reloadList();
+        pendingEmissions = dao.findAllPending();
         newEmission = new CountryEmission();
         FacesContext.getCurrentInstance()
                 .addMessage(null,
                         new FacesMessage("Neuer Datensatz angelegt"));
+        String user = FacesContext.getCurrentInstance()
+                .getExternalContext().getUserPrincipal().getName();
+        String entry = LocalDate.now() + " " + user + " angelegt; ";
+        newEmission.setChangeLog(entry);
     }
 
     public void onCountryCodeChange() {
@@ -122,6 +132,10 @@ public class EmissionsAdminBean implements Serializable {
         return availableCountries;
     }
 
+    public List<CountryEmission> getPendingEmissions() {
+        return pendingEmissions;
+    }
+
     public String getSelectedCountryCode() {
         return selectedCountryCode;
     }
@@ -130,4 +144,11 @@ public class EmissionsAdminBean implements Serializable {
         this.selectedCountryCode = code;
     }
 
+    public void delete(CountryEmission e) {
+        dao.delete(e);
+        reloadList();
+        pendingEmissions = dao.findAllPending();
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage("Datensatz gelöscht, ID: " + e.getId()));
+    }
 }
