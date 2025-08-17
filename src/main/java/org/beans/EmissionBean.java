@@ -77,8 +77,20 @@ public class EmissionBean implements Serializable {
 
 // Auswahl übernehmen
     public void applyCitizenship() {
-        loadLatest();
-        allEmissionsApproved = dao.findByCountry(selectedCountry);
+        loadLatest(); // setzt selectedYear und latestEmission
+        if (latestEmission != null) {
+            int y = latestEmission.getYear();
+            List<CountryEmission> list = dao.findByCountry(selectedCountry);
+            List<CountryEmission> filtered = new ArrayList<>();
+            for (CountryEmission ce : list) {
+                if (ce.isApproved() && ce.getYear() == y) {
+                    filtered.add(ce);
+                }
+            }
+            allEmissionsApproved = filtered;
+        } else {
+            allEmissionsApproved = dao.findByCountry(selectedCountry);
+        }
         showCitizenshipDialog = false;
     }
 

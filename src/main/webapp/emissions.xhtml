@@ -84,7 +84,8 @@
                 <p:commandButton value="Übernehmen"
                                  action="#{emissionBean.applyCitizenship}"
                                  update=":emissionsForm"
-                                 oncomplete="if(!args.validationFailed){ PF('dataTable').filter(); PF('citizenDlg').hide(); }"/>
+                                 resetValues="true"
+                                 oncomplete="PF('citizenDlg').hide()"/>
 
                 <!-- NEIN: Alle Länder laden -->
                 <p:commandButton value="Alle Länder anzeigen"
@@ -92,7 +93,8 @@
                                  process="@this"
                                  immediate="true"
                                  update=":emissionsForm"
-                                 oncomplete="PF('dataTable').clearFilters(); PF('citizenDlg').hide()"/>
+                                 resetValues="true"
+                                 oncomplete="PF('citizenDlg').hide()"/>
             </h:form>
         </p:dialog>
 
