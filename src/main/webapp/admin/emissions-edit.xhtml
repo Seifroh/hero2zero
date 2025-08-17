@@ -11,31 +11,24 @@
         <h:outputStylesheet library="primefaces-nova-light" name="theme.css"/>
     </h:head>
     <h:body>
-        <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
+        <p:toolbar>
             <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5em;">
                 <h:graphicImage library="images"
                                 name="logo.png"
                                 alt="Hero2Zero Logo"
                                 height="80"/>
-                <h:outputText value="Like Hero to Zero - Wissenschaftsbereich"
-                              style="font-weight:bold; font-size:1.7em; color:#333; "/>
+                <h1>Like Hero to Zero - Wissenschaftsbereich</h1>
             </p:toolbarGroup>
 
             <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
                               icon="pi pi-sign-in"
-                              outcome="login"
+                              outcome="/admin/emissions-edit.xhtml"
                               styleClass="ui-button-sm"/>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{loginBean.loggedIn}">
-                    <!-- Datenpflege-Button bleibt auskommentiert für spätere Nutzung -->
-                    <!--
-                    <p:button value="Datenpflege"
-                              icon="pi pi-database"
-                              outcome="/admin/emissions-edit.xhtml"
-                              styleClass="ui-button-sm"/>
-                    -->
+
                     <h:form style="display:inline;">
                         <p:commandButton value="Logout"
                                          icon="pi pi-sign-out"
@@ -59,18 +52,24 @@
         <h:panelGroup rendered="#{loginBean.loggedIn}" layout="block"
                       style="text-align:right; padding:0 1em 0.5em 1em;">
             <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
-                          style="color:#333; font-style:italic;"/>
+                          style="font-style:italic;"/>
         </h:panelGroup>
 
-        <!-- Impressum-Dialog global -->
-        <p:dialog header="Hinweis" widgetVar="impressumDlg"
-                  modal="true" closable="true"
-                  draggable="false" resizable="false">
+        <p:dialog header="Hinweis" 
+                  widgetVar="impressumDlg"
+                  modal="true" 
+                  closable="true"
+                  draggable="false" 
+                  resizable="false">
             <h:outputText value="Uniprojekt – keine kommerzielle Nutzung."/>
         </p:dialog>
 
-        <p:accordionPanel multiple="false" activeIndex="-1" style="margin-bottom:1em">
-            <p:tab title="Zur Freigabe (#{emissionsAdminBean.pendingEmissions.size()})">
+        <p:accordionPanel id="pendingAcc" 
+                          multiple="false" 
+                          cache="false" 
+                          activeIndex="-1" 
+                          style="margin-bottom:1em">
+            <p:tab title="Zur Freigabe (#{emissionsAdminBean.pendingCount})">
                 <p:dataTable value="#{emissionsAdminBean.pendingEmissions}"
                              var="p" rows="5" paginator="true"
                              style="width:100%">
@@ -107,7 +106,7 @@
 
             <!-- DataTable für Admin & Wissenschaftler -->
             <p:dataTable id="dataTable"
-                         widgetVar="adminTable"
+                         widgetVar="dataTable"
                          value="#{emissionsAdminBean.allEmissions}"
                          var="e"
                          editable="true" editMode="cell"
@@ -127,11 +126,10 @@
                     <f:facet name="filter">
                         <p:inputText id="filterCountry"
                                      placeholder="Land"
-                                     style="width:100%"
                                      maxlength="50"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
                                      pt:title="Nur Buchstaben. Maximal 50 Zeichen."
-                                     onkeyup="PF('adminTable').filter()"/>
+                                     onkeyup="PF('dataTable').filter()"/>
                     </f:facet>
                     <h:outputText value="#{e.country}"/>
                 </p:column>
@@ -148,7 +146,7 @@
                                      maxlength="3"
                                      pt:pattern="[A-Za-z]{1,3}"
                                      pt:title="Bis zu 3 Buchstaben. Keine Umlaute."
-                                     onkeyup="PF('adminTable').filter()"/>
+                                     onkeyup="PF('dataTable').filter()"/>
                     </f:facet>
                     <h:outputText value="#{e.countryCode}"/>
                 </p:column>
@@ -162,7 +160,7 @@
                                      maxlength="4"
                                      pt:pattern="\d{4}"
                                      pt:title="4 Ziffern, z. B. 1950."
-                                     onkeyup="PF('adminTable').filter()"/>
+                                     onkeyup="PF('dataTable').filter()"/>
                     </f:facet>
                     <h:outputText value="#{e.year}"/>
                 </p:column>
@@ -178,7 +176,7 @@
                                      maxlength="10"
                                      pt:pattern="\d+(\.\d+)?"
                                      pt:title="Nur Zahlen. Nachkommastellen mit Punkt."
-                                     onkeyup="PF('adminTable').filter()"/>
+                                     onkeyup="PF('dataTable').filter()"/>
                     </f:facet>
                     <p:rowEditor />
                     <p:cellEditor>
@@ -201,7 +199,8 @@
                                          icon="pi pi-check"
                                          styleClass="ui-button-sm"
                                          action="#{emissionsAdminBean.approve(e)}"
-                                         update=":adminForm:dataTable :adminForm:messages"
+                                         update=":adminForm:dataTable 
+                                         :pendingAcc :adminForm:messages"
                                          rendered="#{!e.approved}"/>
                     </h:panelGroup>
                 </p:column>
@@ -210,8 +209,8 @@
                     <p:commandButton icon="pi pi-trash"
                                      title="Datensatz löschen"
                                      action="#{emissionsAdminBean.delete(e)}"
-                                     update=":adminForm:dataTable :adminForm:messages"
-                                     oncomplete="PF('confirmDlg').hide()">
+                                     update=":adminForm:dataTable 
+                                     :pendingAcc :adminForm:messages">
                         <p:confirm header="Bitte bestätigen" 
                                    message="Wollen Sie Datensatz #{e.id} wirklich löschen?"
                                    icon="pi pi-exclamation-triangle"/>
@@ -225,7 +224,8 @@
                 <!-- Ajax-Listener für Cell-Edit -->
                 <p:ajax event="cellEdit"
                         listener="#{emissionsAdminBean.onCellEdit}"
-                        update=":adminForm:dataTable :adminForm:messages"/>
+                        update=":adminForm:dataTable 
+                        :pendingAcc :adminForm:messages"/>  
             </p:dataTable>
         </h:form>
 
@@ -248,17 +248,13 @@
                     <p:selectOneMenu id="countrySelect"
                                      value="#{emissionsAdminBean.selectedCountryCode}"
                                      required="true" 
-                                     requiredMessage="Bitte wählen Sie ein Land aus."
-                                     style="width:100%">
+                                     requiredMessage="Bitte wählen Sie ein Land aus.">
 
                         <f:selectItem itemLabel="Bitte wählen ..." 
                                       itemValue="" 
                                       noSelectionOption="true"/>
 
-                        <f:selectItems value="#{emissionsAdminBean.availableCountries}"
-                                       var="c"
-                                       itemLabel="#{c.country} (#{c.countryCode})"
-                                       itemValue="#{c.countryCode}"/>
+                        <f:selectItems value="#{emissionsAdminBean.availableCountries}"/>
 
                         <p:ajax event="valueChange"
                                 listener="#{emissionsAdminBean.onCountryCodeChange}"
@@ -271,7 +267,9 @@
                     <p:inputText id="inYear"
                                  value="#{emissionsAdminBean.newEmission.year}"
                                  required="true"
-                                 maxlength="4" label="Jahr"/>
+                                 maxlength="4" label="Jahr"
+                                 pt:type="number" pt:min="1750" 
+                                 pt:max="#{emissionsAdminBean.yearMax}"/>
 
                     <h:outputLabel for="inCo2" value="CO₂ (kt):"/>
                     <p:inputText id="inCo2"
@@ -285,17 +283,16 @@
                                  action="#{emissionsAdminBean.saveNew}"
                                  update="newEmissionForm:newEmissionMessages 
                                  :adminForm:dataTable 
-                                 :adminForm:messages"              
+                                 :pendingAcc 
+                                 :adminForm:messages"            
                                  oncomplete="PF('dlgNewEmission').hide()"/>
             </h:form>
         </p:dialog>
 
-        <h:panelGroup layout="block"
-                      style="text-align:center; padding:0.5em; background:#f7f2e8">
-            <h:outputText value="Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE"
-                          style="font-weight:bold"/>
-        </h:panelGroup>
-        
+        <footer>
+            Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE
+        </footer>
+
         <p:confirmDialog global="true" widgetVar="confirmDlg" showEffect="fade">
             <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes"/>
             <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no"/>

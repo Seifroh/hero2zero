@@ -11,22 +11,20 @@
         <h:outputStylesheet library="primefaces-nova-light" name="theme.css"/>
     </h:head>
     <h:body>
-        <p:toolbar style="background-color:#f7f2e8; padding:0.5em;">
-            <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5em">
+        <p:toolbar >
+            <p:toolbarGroup align="left" style="display:flex; align-items:center; gap:0.5rem">
                 <h:graphicImage library="images"
                                 name="logo.png"
                                 alt="Hero2Zero Logo"
                                 height="80"/>
-                <h:outputText value="Like Hero to Zero"
-                              style="font-weight:bold; font-size:1.7em; color:#333; "/>
+                <h1>Like Hero to Zero</h1>
             </p:toolbarGroup>
 
-            <p:toolbarGroup align="right" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:0.5em">
-
+            <p:toolbarGroup align="right" style="display:flex; align-items:center; gap:0.5rem">
                 <h:panelGroup rendered="#{!loginBean.loggedIn}">
                     <p:button value="Login"
                               icon="pi pi-sign-in"
-                              outcome="login"
+                              outcome="/admin/emissions-edit.xhtml"
                               styleClass="ui-button-sm"/>
                 </h:panelGroup>
 
@@ -47,7 +45,7 @@
 
                 <p:button value="Home"
                           icon="pi pi-home"
-                          outcome="emissions"
+                          outcome="/emissions.xhtml"
                           styleClass="ui-button-sm"/>
 
                 <p:button value="Impressum"
@@ -57,10 +55,11 @@
             </p:toolbarGroup>
         </p:toolbar>
 
-        <h:panelGroup rendered="#{loginBean.loggedIn}" layout="block"
+        <h:panelGroup rendered="#{loginBean.loggedIn}" 
+                      layout="block"
                       style="text-align:right; padding:0 1em 0.5em 1em;">
-            <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}"
-                          style="color:#333; font-style:italic;"/>
+            <h:outputText value="Angemeldet als #{facesContext.externalContext.userPrincipal.name}" 
+                          style="font-style:italic;"/>
         </h:panelGroup>
 
         <p:dialog header="Hinweis" widgetVar="impressumDlg"
@@ -68,24 +67,50 @@
                   draggable="false" resizable="false">
             <h:outputText value="Uniprojekt – kein formelles Impressum notwendig."/>
         </p:dialog>
+        <p:dialog header="Bitte Staatsbürgerschaft wählen"
+                  widgetVar="citizenDlg"
+                  modal="true" closable="false" resizable="false"
+                  visible="#{emissionBean.showCitizenshipDialog}">
+            <h:form id="citizenForm">
+                <h:outputLabel for="cit" value="Land"/>
+                <p:selectOneMenu id="cit"
+                                 value="#{emissionBean.selectedCountry}"
+                                 required="true">
+                    <f:selectItem itemLabel="Bitte wählen ..." itemValue=""/>
+                    <f:selectItems value="#{emissionBean.countryOptions}"/>
+                </p:selectOneMenu>
+
+                <!-- JA: Staatsbürgerschaft setzen -->
+                <p:commandButton value="Übernehmen"
+                                 action="#{emissionBean.applyCitizenship}"
+                                 update=":emissionsForm"
+                                 oncomplete="if(!args.validationFailed){ PF('dataTable').filter(); PF('citizenDlg').hide(); }"/>
+
+                <!-- NEIN: Alle Länder laden -->
+                <p:commandButton value="Alle Länder anzeigen"
+                                 action="#{emissionBean.ladeAlle}"
+                                 process="@this"
+                                 immediate="true"
+                                 update=":emissionsForm"
+                                 oncomplete="PF('dataTable').clearFilters(); PF('citizenDlg').hide()"/>
+            </h:form>
+        </p:dialog>
 
         <h:form id="emissionsForm">
             <p:growl id="messages" showDetail="true" showSummary="false"/>
-            <p:growl id="infoGrowl" showDetail="true" showSummary="false"/>
 
-            <h:panelGroup layout="block" style="margin:1em 0;">
-                <h:outputText value="Über die Filterfelder in der Tabelle können Sie gezielt nach Ländern, 
-                              Ländercodes, Jahren oder CO₂-Werten suchen. Nachkommastellen bitte mit Punkt eingeben (z. B. 0.1). 
-                              Diese Webseite ist ein Prototyp und befindet sich in der Entwicklung. 
-                              Die Texte/Beschriftungen sind auf deutsch; Tabelleninhalte und Zahlenformate sind englisch." 
-                              style="color:#555;"/>
+            <h:panelGroup layout="block">
+                <p>
+                    Über die Filterfelder in der Tabelle können Sie gezielt nach Ländern, Ländercodes, Jahren oder CO₂ Werten suchen.<br/>
+                    Nachkommastellen bitte mit Punkt eingeben. Beispiel 0.1.<br/>
+                    Diese Seite ist ein Prototyp. Texte sind auf deutsch. Tabelleninhalte und Zahlenformate sind englisch.
+                </p>
             </h:panelGroup>
 
             <h:panelGroup rendered="#{not empty emissionBean.vorauswahlHinweis}"
                           layout="block"
                           style="margin:1em 0">
-                <h:outputText value="#{emissionBean.vorauswahlHinweis}" 
-                              style="color:#555;"/>
+                <h:outputText value="#{emissionBean.vorauswahlHinweis}"/>
             </h:panelGroup>
 
             <p:accordionPanel multiple="false" activeIndex="-1" style="margin:1em 0">
@@ -126,10 +151,10 @@
                                      style="width:100%"
                                      maxlength="50"
                                      onkeyup="if (this.checkValidity()) {
-                                             PF('dataTable').filter();
-                                         } else {
-                                             this.reportValidity();
-                                         }"
+                                                 PF('dataTable').filter();
+                                             } else {
+                                                 this.reportValidity();
+                                             }"
                                      pt:pattern="[A-Za-zÄÖÜäöüß ]+"
                                      pt:title="Nur Buchstaben erlaubt, auch Umlaute. Maximal 50 Zeichen."/>
                     </f:facet>
@@ -147,10 +172,10 @@
                             placeholder="Code"
                             maxlength="3"
                             onkeyup="if (this.checkValidity()) {
-                                    PF('dataTable').filter();
-                                } else {
-                                    this.reportValidity();
-                                }"
+                                        PF('dataTable').filter();
+                                    } else {
+                                        this.reportValidity();
+                                    }"
                             pt:pattern="[A-Za-z]{1,3}"
                             pt:title="Bis zu 3 Buchstaben. Keine Umlaute erlaubt."/>
                     </f:facet>
@@ -167,10 +192,10 @@
                                      style="width:100%"
                                      maxlength="4"
                                      onkeyup="if (this.checkValidity()) {
-                                             PF('dataTable').filter();
-                                         } else {
-                                             this.reportValidity();
-                                         }"
+                                                 PF('dataTable').filter();
+                                             } else {
+                                                 this.reportValidity();
+                                             }"
                                      pt:pattern="\d{4}"
                                      pt:title="Vier Zahlen erforderlich, z.B. 1950."/>
                     </f:facet>
@@ -194,11 +219,8 @@
 
             </p:dataTable>
         </h:form>
-
-        <h:panelGroup layout="block"
-                      style="text-align:center; padding:0.5em; background:#f7f2e8">
-            <h:outputText value="Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE"
-                          style="font-weight:bold"/>
-        </h:panelGroup>
+        <footer>
+            Modul: IPWA02-01 Programmierung von industriellen Informationssystemen mit Java EE
+        </footer>
     </h:body>
 </html>

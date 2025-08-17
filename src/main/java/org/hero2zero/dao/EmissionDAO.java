@@ -123,6 +123,16 @@ public class EmissionDAO {
                 .getResultList();
     }
 
+    public List<Object[]> findAllCountries() {
+        return em.createQuery(
+                "SELECT DISTINCT e.country, e.countryCode "
+                + "FROM CountryEmission e "
+                + "WHERE e.country IS NOT NULL "
+                + "ORDER BY e.country",
+                Object[].class
+        ).getResultList();
+    }
+
     public void delete(CountryEmission emission) {
         CountryEmission toRemove = em.find(CountryEmission.class, emission.getId());
         if (toRemove != null) {
