@@ -4,8 +4,7 @@ Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pfl
 ## Tech-Stack
 JDK 17, Payara 6 (Jakarta EE 10), JPA (MySQL), JSF (PrimeFaces).
 
-## Architektur (Kurzüberblick – Klassen)
-
+## Architektur – Klassen (Kurzüberblick)
 ```mermaid
 classDiagram
   %% Associations via fields
@@ -21,42 +20,44 @@ classDiagram
   EmissionBean ..> CountryEmission : returns
   EmissionsAdminBean ..> CountryEmission : returns/params
 ```
+
+## Architektur – Komponenten
 ```mermaid
 flowchart TB
   %% --- Cluster ---
-  subgraph JSF["Frontend (JSF)"];
+  subgraph JSF["Frontend (JSF)"]
     index["index.xhtml"];
     emissions["emissions.xhtml"];
     admin["/admin/emissions-edit.xhtml"];
     login["login.xhtml"];
-  end;
+  end
 
-  subgraph Beans["Managed Beans (CDI/JSF)"];
+  subgraph Beans["Managed Beans (CDI/JSF)"]
     EmissionBean;
     EmissionsAdminBean;
     LoginBean;
     HelloBean;
     FilterUtil;
-  end;
+  end
 
-  subgraph REST["REST API (/api)"];
+  subgraph REST["REST API (/api)"]
     EmissionResource;
     JakartaEE10Resource;
-  end;
+  end
 
-  subgraph Persistence["Persistence / Daten"];
+  subgraph Persistence["Persistence / Daten"]
     EmissionDAO;
     CountryEmission;
     DB["MySQL hero2zero"];
-  end;
+  end
 
-  %% --- Verbindungen (aus deinem Code) ---
+  %% --- Verbindungen (aus dem Code) ---
   index --> HelloBean;
   emissions --> EmissionBean;
   emissions --> LoginBean;
   admin --> EmissionsAdminBean;
   admin --> FilterUtil;
-  login --> LoginBean;
+  admin --> LoginBean;
 
   EmissionBean --> EmissionDAO;
   EmissionsAdminBean --> EmissionDAO;
@@ -65,31 +66,11 @@ flowchart TB
   EmissionDAO --> CountryEmission;
   EmissionDAO --> DB;
 ```
+*Legende:* `-->` nutzt/ruft an. EL-Bindings aus XHTML → Beans sind hier **absichtlich** sichtbar; reine Container-Entdeckungen (z. B. `@ApplicationPath`) erzeugen keine Kante.
 
-```mermaid
-sequenceDiagram
-  autonumber
-  actor User
-  participant EmissionsPage as "emissions.xhtml"
-  participant LoginPage as "login.xhtml"
-  participant AdminPage as "/admin/emissions-edit.xhtml"
-  participant LoginBean
+## Nutzerflüsse – Sequenzen
 
-  alt not logged in
-    User ->> EmissionsPage: Klick "Login"
-    EmissionsPage ->> LoginPage: GET login.xhtml
-  end
-  User ->> LoginPage: Submit j_security_check
-  LoginPage ->> EmissionsPage: GET emissions.xhtml
-  alt logged in
-    User ->> EmissionsPage: Klick "Datenpflege"
-    EmissionsPage ->> AdminPage: GET /admin/emissions-edit.xhtml
-  end
-  User ->> EmissionsPage: Klick "Logout"
-  EmissionsPage ->> LoginBean: logout()
-  LoginBean ->> EmissionsPage: redirect "/emissions.xhtml"
-```
-
+### Navigation (Login/Logout/Admin)
 ```mermaid
 sequenceDiagram
   autonumber
@@ -117,9 +98,9 @@ sequenceDiagram
   User ->> EmissionsPage: Klick "Logout" (action="#{loginBean.logout()}")
   EmissionsPage ->> LoginBean: logout()
   LoginBean ->> EmissionsPage: redirect "/emissions.xhtml"
-
 ```
 
+### „Alle Daten“ auf *emissions.xhtml*
 ```mermaid
 sequenceDiagram
   autonumber
@@ -139,6 +120,7 @@ sequenceDiagram
   EmissionsPage -->> User: Tabelle mit freigegebenen Einträgen
 ```
 
+### Admin-Aktionen auf */admin/emissions-edit.xhtml*
 ```mermaid
 sequenceDiagram
   autonumber
@@ -174,3 +156,22 @@ sequenceDiagram
     EmissionsAdminBean -->> AdminPage: Refresh Listen
   end
 ```
+
+## Setup und Run (Dev)
+- Payara 6 starten; Datasource **`jdbc/hero2zero`** anlegen.  
+- `persistence.xml` (PU: **Hero2ZeroPU**) zeigt auf  
+  `jdbc:mysql://127.0.0.1:3306/hero2zero`, User `h2zuser`, PW `h2zpass`.  
+- WAR deployen; App-URL entsprechend deiner Umgebung aufrufen.
+
+## REST-API
+`GET /api/emissions` – liefert `List<CountryEmission>` (siehe `@ApplicationPath("api")` + `@Path("emissions")`).
+
+## Screenshots (Umsetzung)
+2–3 Bilder: **emissions.xhtml**, **login.xhtml**, **/admin/emissions-edit.xhtml**.
+
+## Hinweise / Qualität
+- JSF-EL erzeugt keine Klassenpfeile → im Komponentendiagramm visualisiert.
+- Dev-Credentials nur lokal; produktiv via Env/Secrets.
+- Sprechende Namen, kleine Klassen, klare Verantwortungen.
+- Optional: weitere Details in CONTRIBUTING.md / SECURITY.md.
+ 
