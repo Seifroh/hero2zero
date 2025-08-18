@@ -1,3 +1,11 @@
+## Überblick
+Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten.
+
+## Tech-Stack
+JDK 17, Payara 6 (Jakarta EE 10), JPA (MySQL), JSF (PrimeFaces).
+
+## Architektur (Kurzüberblick – Klassen)
+
 ```mermaid
 classDiagram
   %% Associations via fields
@@ -63,8 +71,6 @@ sequenceDiagram
   EmissionsPage -->> User: Tabelle mit freigegebenen Einträgen
 ```
 
-
-
 ```mermaid
 sequenceDiagram
   autonumber
@@ -99,5 +105,4 @@ sequenceDiagram
     EmissionDAO -->> EmissionsAdminBean: done
     EmissionsAdminBean -->> AdminPage: Refresh Listen
   end
-
 ```
