@@ -21,6 +21,74 @@ classDiagram
   EmissionBean ..> CountryEmission : returns
   EmissionsAdminBean ..> CountryEmission : returns/params
 ```
+```mermaid
+flowchart TB
+  %% --- Cluster ---
+  subgraph JSF["Frontend (JSF)"];
+    index["index.xhtml"];
+    emissions["emissions.xhtml"];
+    admin["/admin/emissions-edit.xhtml"];
+    login["login.xhtml"];
+  end;
+
+  subgraph Beans["Managed Beans (CDI/JSF)"];
+    EmissionBean;
+    EmissionsAdminBean;
+    LoginBean;
+    HelloBean;
+    FilterUtil;
+  end;
+
+  subgraph REST["REST API (/api)"];
+    EmissionResource;
+    JakartaEE10Resource;
+  end;
+
+  subgraph Persistence["Persistence / Daten"];
+    EmissionDAO;
+    CountryEmission;
+    DB["MySQL hero2zero"];
+  end;
+
+  %% --- Verbindungen (aus deinem Code) ---
+  index --> HelloBean;
+  emissions --> EmissionBean;
+  emissions --> LoginBean;
+  admin --> EmissionsAdminBean;
+  admin --> FilterUtil;
+  login --> LoginBean;
+
+  EmissionBean --> EmissionDAO;
+  EmissionsAdminBean --> EmissionDAO;
+  EmissionResource --> EmissionDAO;
+
+  EmissionDAO --> CountryEmission;
+  EmissionDAO --> DB;
+```
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant EmissionsPage as "emissions.xhtml"
+  participant LoginPage as "login.xhtml"
+  participant AdminPage as "/admin/emissions-edit.xhtml"
+  participant LoginBean
+
+  alt not logged in
+    User ->> EmissionsPage: Klick "Login"
+    EmissionsPage ->> LoginPage: GET login.xhtml
+  end
+  User ->> LoginPage: Submit j_security_check
+  LoginPage ->> EmissionsPage: GET emissions.xhtml
+  alt logged in
+    User ->> EmissionsPage: Klick "Datenpflege"
+    EmissionsPage ->> AdminPage: GET /admin/emissions-edit.xhtml
+  end
+  User ->> EmissionsPage: Klick "Logout"
+  EmissionsPage ->> LoginBean: logout()
+  LoginBean ->> EmissionsPage: redirect "/emissions.xhtml"
+```
 
 ```mermaid
 sequenceDiagram
