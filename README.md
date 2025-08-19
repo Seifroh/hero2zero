@@ -1,5 +1,5 @@
 ## Überblick
-Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten.</br> 
+Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten.<br> 
 Dies ist ein Studienprojekt ohne kommerziellen Hintergrund.
 
 ## Tech-Stack
@@ -7,19 +7,19 @@ JDK 17, Payara 6 (Jakarta EE 10), JPA (MySQL), JSF (PrimeFaces).
 
 ## Screenshots (Umsetzung)
 ### Startseite – `emissions.xhtml`
-Auswahl der Staatsbürgerschaft. Tabelle zeigt freigegebene CO₂-Einträge.
+Auswahl des Landes (der Staatsbürgerschaft). Tabelle zeigt freigegebene CO₂-Einträge.
 <p>
   <img src="docs/img/emissions.png" alt="Emissionsseite" width="800">
 </p>
 
 ### Login – `login.xhtml`
-Formularbasierter Login (Container-Security); Weiter zur `/admin/emissions-edit.xhtml` nach erfolgreicher Anmeldung.
+Formularbasierter Login (Container-Security); nach erfolgreicher Anmeldung automatische Weiterleitung auf `/admin/emissions-edit.xhtml`.
 <p>
   <img src="docs/img/login.png" alt="Login" width="800">
 </p>
 
 ### Datenpflege (Wissenschaftsbereich) – `/admin/emissions-edit.xhtml` als eingeloggter User
-Änderung von CO²-Werten, anlegen neuer Datensätze; Filterfunktion für schnelle Eingrenzung.
+Änderung von CO₂-Werten, anlegen neuer Datensätze; Filterfunktion für schnelle Eingrenzung.
 <p>
   <img src="docs/img/emissions-edit-wissenschaftler.png" alt="Emissions-Edit (Wissenschaftler)" width="800">
 </p>
@@ -37,7 +37,6 @@ classDiagram
   EmissionBean --> EmissionDAO : field (dao)
   EmissionsAdminBean --> EmissionDAO : field (dao)
   EmissionResource --> EmissionDAO : field (dao)
-  EmissionDAO --> CountryEmission : manages
   EmissionBean --> CountryEmission : field (latestEmission)
   EmissionsAdminBean --> CountryEmission : field (newEmission)
 
@@ -45,6 +44,7 @@ classDiagram
   EmissionDAO ..> CountryEmission : returns/params
   EmissionBean ..> CountryEmission : returns
   EmissionsAdminBean ..> CountryEmission : returns/params
+  EmissionResource ..> CountryEmission : returns
 ```
 
 ## Architektur – Komponenten
@@ -91,8 +91,8 @@ flowchart TB
   EmissionDAO --> CountryEmission;
   EmissionDAO --> DB;
 ```
-*Legende:* `-->` nutzt/ruft an. EL-Bindings aus XHTML → Beans sind hier **absichtlich** sichtbar; reine Container-Entdeckungen (z. B. `@ApplicationPath`) erzeugen keine Kante. </br>
-EmissionResource → EmissionDAO = methodischer Aufruf (z. B. DAO-Methoden).</br>
+*Legende:* `-->` nutzt/ruft an. EL-Bindings aus XHTML → Beans sind hier **absichtlich** sichtbar; reine Container-Entdeckungen (z. B. `@ApplicationPath`) erzeugen keine Kante. <br>
+EmissionResource → EmissionDAO = methodischer Aufruf (z. B. DAO-Methoden).<br>
 EmissionDAO → CountryEmission/DB = JPA-Entity bzw. Datenbankzugriff.
 
 ## Nutzerflüsse – Sequenzen
@@ -144,7 +144,7 @@ sequenceDiagram
   DB -->> EmissionDAO: List<CountryEmission>
   EmissionDAO -->> EmissionBean: List<CountryEmission>
   EmissionBean -->> EmissionsPage: update dataTable (AJAX)
-  EmissionsPage -->> User: Tabelle mit freigegebenen Einträgen
+  EmissionsPage -->> User: Tabelle aktualisiert (freigegebene Einträge)
 ```
 
 ### Admin-Aktionen auf */admin/emissions-edit.xhtml*
@@ -198,7 +198,7 @@ Bitte `persistence.example.xml` nach `META-INF/persistence.xml` kopieren und die
 `GET /api/emissions` – liefert `List<CountryEmission>` 
 
 ### Sicherheit
-Echte DB-Zugangsdaten werden nicht im Repo gespeichert; `persistence.xml` ist lokal zu pflegen.“
+Echte DB-Zugangsdaten werden nicht im Repo gespeichert; `persistence.xml` ist lokal zu pflegen.
 
 ## Hinweise / Qualität
 - JSF-EL erzeugt keine Klassenpfeile → im Komponentendiagramm visualisiert.
