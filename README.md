@@ -9,25 +9,25 @@ JDK 17, Payara 6 (Jakarta EE 10), JPA (MySQL), JSF (PrimeFaces).
 ### Startseite – `emissions.xhtml`
 Auswahl des Landes (der Staatsbürgerschaft). Tabelle zeigt freigegebene CO₂-Einträge.
 <p>
-  <img src="docs/img/emissions.png" alt="Emissionsseite" width="800">
+  <img src="docs/img/emissions.png" alt="Emissionsseite" width="400">
 </p>
 
 ### Login – `login.xhtml`
 Formularbasierter Login (Container-Security); nach erfolgreicher Anmeldung automatische Weiterleitung auf `/admin/emissions-edit.xhtml`.
 <p>
-  <img src="docs/img/login.png" alt="Login" width="800">
+  <img src="docs/img/login.png" alt="Login" width="400">
 </p>
 
 ### Datenpflege (Wissenschaftsbereich) – `/admin/emissions-edit.xhtml` als eingeloggter User
 Änderung von CO₂-Werten, anlegen neuer Datensätze; Filterfunktion für schnelle Eingrenzung.
 <p>
-  <img src="docs/img/emissions-edit-wissenschaftler.png" alt="Emissions-Edit (Wissenschaftler)" width="800">
+  <img src="docs/img/emissions-edit-wissenschaftler.png" alt="Emissions-Edit (Wissenschaftler)" width="400">
 </p>
 
 ### Datenpflege (Wissenschaftsbereich) – `/admin/emissions-edit.xhtml` eingeloggt als Rolle 'admin'
 Ändern, neu anlegen, freigeben oder löschen von Datensätzen; Filterfunktion wie User
 <p>
-  <img src="docs/img/emissions-edit-admin.png" alt="Emissions-Edit (Admin)" width="800">
+  <img src="docs/img/emissions-edit-admin.png" alt="Emissions-Edit (Admin)" width="400">
 </p>
 
 ## Architektur – Klassen (Kurzüberblick)
