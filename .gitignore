@@ -13,3 +13,11 @@
 # OS
 .DS_Store
 Thumbs.db
+
+# App/Secrets
+**/persistence.xml
+
+# Datenordner (lokal behalten, nicht tracken)
+data/
+*.csv
+
