@@ -49,7 +49,6 @@ classDiagram
 ## Architektur – Komponenten
 ```mermaid
 flowchart TB
-  %% --- Cluster ---
   subgraph JSF["Frontend (JSF)"]
     index["index.xhtml"];
     emissions["emissions.xhtml"];
@@ -76,7 +75,7 @@ flowchart TB
     DB["MySQL hero2zero"];
   end
 
-  %% --- Verbindungen (aus dem Code) ---
+  %% Verbindungen
   index --> HelloBean;
   emissions --> EmissionBean;
   emissions --> LoginBean;
@@ -91,7 +90,9 @@ flowchart TB
   EmissionDAO --> CountryEmission;
   EmissionDAO --> DB;
 ```
-*Legende:* `-->` nutzt/ruft an. EL-Bindings aus XHTML → Beans sind hier **absichtlich** sichtbar; reine Container-Entdeckungen (z. B. `@ApplicationPath`) erzeugen keine Kante.
+*Legende:* `-->` nutzt/ruft an. EL-Bindings aus XHTML → Beans sind hier **absichtlich** sichtbar; reine Container-Entdeckungen (z. B. `@ApplicationPath`) erzeugen keine Kante. </br>
+EmissionResource → EmissionDAO = methodischer Aufruf (z. B. DAO-Methoden).</br>
+EmissionDAO → CountryEmission/DB = JPA-Entity bzw. Datenbankzugriff.
 
 ## Nutzerflüsse – Sequenzen
 
