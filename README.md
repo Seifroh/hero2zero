@@ -183,14 +183,21 @@ sequenceDiagram
   end
 ```
 
-## Setup und Run (Dev)
-- Payara 6 starten; Datasource **`jdbc/hero2zero`** anlegen.  
-- `persistence.xml` (PU: **Hero2ZeroPU**) zeigt auf  
-  `jdbc:mysql://127.0.0.1:3306/hero2zero`, User `h2zuser`, PW `h2zpass`.  
-- WAR deployen; App-URL entsprechend deiner Umgebung aufrufen.
+**Hinweis zur Persistenz:** In diesem Repo sind keine Zugangsdaten hinterlegt. 
+Bitte `persistence.example.xml` nach `META-INF/persistence.xml` kopieren und die Platzhalter ausfüllen:
+
+```xml
+<property name="jakarta.persistence.jdbc.driver"   value="com.mysql.cj.jdbc.Driver"/>
+<property name="jakarta.persistence.jdbc.url"      value="jdbc:mysql://127.0.0.1:3306/hero2zero"/>
+<property name="jakarta.persistence.jdbc.user"     value="PUT_DBUSER_HERE"/>
+<property name="jakarta.persistence.jdbc.password" value="PUT_DBPASSWORT_HERE"/>
+```
 
 ## REST-API
-`GET /api/emissions` – liefert `List<CountryEmission>` (siehe `@ApplicationPath("api")` + `@Path("emissions")`).
+`GET /api/emissions` – liefert `List<CountryEmission>` 
+
+### Sicherheit
+Echte DB-Zugangsdaten werden nicht im Repo gespeichert; `persistence.xml` ist lokal zu pflegen.“
 
 ## Hinweise / Qualität
 - JSF-EL erzeugt keine Klassenpfeile → im Komponentendiagramm visualisiert.
