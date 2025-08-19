@@ -167,7 +167,29 @@ sequenceDiagram
 `GET /api/emissions` – liefert `List<CountryEmission>` (siehe `@ApplicationPath("api")` + `@Path("emissions")`).
 
 ## Screenshots (Umsetzung)
-2–3 Bilder: **emissions.xhtml**, **login.xhtml**, **/admin/emissions-edit.xhtml**.
+### Startseite – `emissions.xhtml`
+Auswahl der Staatsbürgerschaft. Tabelle zeigt freigegebene CO₂-Einträge.
+<p>
+  <img src="docs/img/emissions.png" alt="Emissionsseite" width="800">
+</p>
+
+### Login – `login.xhtml`
+Formularbasierter Login (Container-Security); Weiter zur `/admin/emissions-edit.xhtml` nach erfolgreicher Anmeldung.
+<p>
+  <img src="docs/img/login.png" alt="Login" width="800">
+</p>
+
+### Datenpflege (Wissenschaftsbereich) – `/admin/emissions-edit.xhtml` als eingeloggter User
+Änderung von CO²-Werten, anlegen neuer Datensätze; Filterfunktion für schnelle Eingrenzung.
+<p>
+  <img src="docs/img/emissions-edit-wissenschaftler.png" alt="Emissions-Edit (Wissenschaftler)" width="800">
+</p>
+
+### Datenpflege (Wissenschaftsbereich) – `/admin/emissions-edit.xhtml` eingeloggt als Rolle 'admin'
+Ändern, neu anlegen, freigeben oder löschen von Datensätzen; Filterfunktion wie User
+<p>
+  <img src="docs/img/emissions-edit-admin.png" alt="Emissions-Edit (Admin)" width="800">
+</p>
 
 ## Hinweise / Qualität
 - JSF-EL erzeugt keine Klassenpfeile → im Komponentendiagramm visualisiert.
