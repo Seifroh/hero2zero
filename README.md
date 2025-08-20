@@ -101,7 +101,6 @@ EmissionDAO → CountryEmission/DB = JPA-Entity bzw. Datenbankzugriff.
 ### Navigation (Login/Logout/Admin)
 ```mermaid
 sequenceDiagram
-  autonumber
   actor User
   participant EmissionsPage as "emissions.xhtml"
   participant LoginPage as "login.xhtml"
@@ -126,7 +125,6 @@ sequenceDiagram
 ### „Alle Daten“ auf *emissions.xhtml*
 ```mermaid
 sequenceDiagram
-  autonumber
   actor User
   participant EmissionsPage as "emissions.xhtml"
   participant EmissionBean
@@ -148,7 +146,6 @@ Dieses Sequenzdiagramm zeigt die drei zustandsändernden Admin-Use-Cases (Freiga
 
 ```mermaid
 sequenceDiagram
-  autonumber
   actor Admin
   participant AdminPage as "/admin/emissions-edit.xhtml"
   participant EmissionsAdminBean
