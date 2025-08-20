@@ -148,6 +148,8 @@ sequenceDiagram
 ```
 
 ### Admin-Aktionen auf */admin/emissions-edit.xhtml*
+Dieses Sequenzdiagramm zeigt die drei zustandsändernden Admin-Use-Cases (Freigabe, Löschen, Speichern). Pfad: JSF-Seite → EmissionsAdminBean → EmissionDAO → DB; danach Listenaktualisierung im UI. Zugriff ist auf die Rolle 'admin' beschränkt.
+
 ```mermaid
 sequenceDiagram
   autonumber
@@ -157,30 +159,34 @@ sequenceDiagram
   participant EmissionDAO
   participant DB as "MySQL hero2zero"
 
-  alt Approve
-    Admin ->> AdminPage: Klick "Approve"
+  opt Freigabe (nur Admin)
+    Admin ->> AdminPage: Klick "Freigabe"
     AdminPage ->> EmissionsAdminBean: approve(e)
     EmissionsAdminBean ->> EmissionDAO: update(e)
     EmissionDAO ->> DB: JPA merge
     DB -->> EmissionDAO: OK
     EmissionDAO -->> EmissionsAdminBean: done
-    EmissionsAdminBean -->> AdminPage: Refresh Listen
-  else Delete
-    Admin ->> AdminPage: Klick "Delete"
+    EmissionsAdminBean -->> AdminPage: Listen aktualisieren
+  end
+
+  opt Datensatz löschen (nur Admin)
+    Admin ->> AdminPage: Klick Trash-Icon (Datensatz löschen)
     AdminPage ->> EmissionsAdminBean: delete(e)
     EmissionsAdminBean ->> EmissionDAO: delete(e)
     EmissionDAO ->> DB: JPA remove
     DB -->> EmissionDAO: OK
     EmissionDAO -->> EmissionsAdminBean: done
-    EmissionsAdminBean -->> AdminPage: Refresh Listen
-  else Save New
+    EmissionsAdminBean -->> AdminPage: Listen aktualisieren
+  end
+
+  opt Neu anlegen speichern (Dialog)
     Admin ->> AdminPage: Klick "Speichern"
     AdminPage ->> EmissionsAdminBean: saveNew()
     EmissionsAdminBean ->> EmissionDAO: create(newEmission)
     EmissionDAO ->> DB: JPA persist
     DB -->> EmissionDAO: OK
     EmissionDAO -->> EmissionsAdminBean: done
-    EmissionsAdminBean -->> AdminPage: Refresh Listen
+    EmissionsAdminBean -->> AdminPage: Listen aktualisieren
   end
 ```
 
