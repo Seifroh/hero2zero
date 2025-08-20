@@ -1,6 +1,7 @@
 ## Überblick
 Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten.<br> 
-Dies ist ein Studienprojekt ohne kommerziellen Hintergrund.
+Es gibt drei Nutzerzustände: nicht eingeloggt (öffentlich), eingeloggt (wissenschaftlich) und eingeloggt als Admin (administrativ). <br>
+Dies ist ein Studienprojekt ohne kommerziellen Hintergrund oder Nutzen.
 
 ## Tech-Stack
 JDK 17, Payara 6 (Jakarta EE 10), JPA (MySQL), JSF (PrimeFaces).
