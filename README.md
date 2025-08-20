@@ -108,23 +108,18 @@ sequenceDiagram
   participant AdminPage as "/admin/emissions-edit.xhtml"
   participant LoginBean
 
-  alt not logged in (#{loginBean.loggedIn} == false)
+  alt not logged in
     User ->> EmissionsPage: Klick "Login" (outcome="login")
     EmissionsPage ->> LoginPage: GET login.xhtml
-  end
-
-  User ->> LoginPage: Submit loginForm (action="j_security_check")
-  LoginPage ->> User: Auth-Result (Container)
-  User ->> LoginPage: Klick "Home" (outcome="emissions")
-  LoginPage ->> EmissionsPage: GET emissions.xhtml
-
-  alt logged in (#{loginBean.loggedIn} == true)
-    User ->> EmissionsPage: Klick "Datenpflege" (outcome="/admin/emissions-edit.xhtml")
+    User ->> LoginPage: Submit loginForm (action="j_security_check")
+    LoginPage ->> AdminPage: redirect /admin/emissions-edit.xhtml (on success)
+  else already logged in
+    User ->> EmissionsPage: Klick "Datenpflege"
     EmissionsPage ->> AdminPage: GET /admin/emissions-edit.xhtml
   end
 
-  User ->> EmissionsPage: Klick "Logout" (action="#{loginBean.logout()}")
-  EmissionsPage ->> LoginBean: logout()
+  User ->> AdminPage: Klick "Logout"
+  AdminPage ->> LoginBean: logout()
   LoginBean ->> EmissionsPage: redirect "/emissions.xhtml"
 ```
 
