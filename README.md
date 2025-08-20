@@ -203,5 +203,4 @@ Echte DB-Zugangsdaten werden nicht im Repo gespeichert; `persistence.xml` ist lo
 - JSF-EL erzeugt keine Klassenpfeile → im Komponentendiagramm visualisiert.
 - Dev-Credentials nur lokal; produktiv via Env/Secrets.
 - Sprechende Namen, kleine Klassen, klare Verantwortungen.
-- Optional: weitere Details in CONTRIBUTING.md / SECURITY.md.
  
