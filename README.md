@@ -1,5 +1,5 @@
 ## Überblick
-Hero2Zero – kleine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten.<br>
+Like Hero To Zero ist eine Jakarta-EE-Anwendung (JSF + REST + JPA) zur Anzeige und Pflege von CO₂-Emissionsdaten. Als Datenquelle wurde unter https://ourworldindata.org/co2-and-greenhouse-gas-emissions der 'Download full data' genutzt (includes all enities an time points).<br>
 Es gibt drei Nutzerzustände: nicht eingeloggt (öffentlich), eingeloggt ohne Admin-Rolle (Wissenschaftler*in) und eingeloggt mit Admin-Rolle (Administrator*in).<br>
 Dies ist ein Studienprojekt ohne kommerziellen Hintergrund.
 
