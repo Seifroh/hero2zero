@@ -5,6 +5,7 @@ Dies ist ein Studienprojekt ohne kommerziellen Hintergrund.
 
 ## Tech-Stack
 JDK 17, Payara 6 (Jakarta EE 10), Jakarta REST (JAX-RS), JPA 3.0 (MySQL), JSF (PrimeFaces).
+SQL-Dump (hero2zero_countryemission_20250831.sql) liegt im Repository-Root.
 
 ## Screenshots
 ### Startseite – `emissions.xhtml`
